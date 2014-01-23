@@ -9,6 +9,7 @@ import tornado.web
 import tornado.options
 import tornado.ioloop
 import tornado.httpserver
+import json
 
 import logging
 from uuid import uuid4
@@ -16,6 +17,8 @@ from uuid import uuid4
 from tornado.options import define, options
 define("port", default = 8000, help = "run on the given port",type = int)
 
+
+from loginHandler import LoginHandler
 
 class Users(object):
 	"""Handle with the users' operation"""
@@ -51,36 +54,7 @@ class MyDataBase(object):
 		
 
 
-class LoginHandler(tornado.web.RequestHandler):
-	"""RequestHandler for login"""
-	def post(self):
-		#=======need further modification for json dict structure========
-		#=======it is easy to test with current writing
-		user_name = self.get_argument("userName")
-		password = self.get_argument("password")
-		#=======================================
-		user_info = self.application.db.find({"name": user_name, "password": password})
-		if user_info:
-			sessionID = uuid4()
-			self.write(user_info)
 
-			#============there're some problems with the json data===============
-			# self.write({
-			# 	"request" : "/user/login.json",
-			# 	"result": "success", 
-			# 	"details": {
-			# 		"userInfo": {
-			# 			"userID": "%d",
-			# 			"userName": "%f",
-			# 			"userNickname": "%f",
-			# 			"userEmail": "%f"
-			# 		},
-			# 		"sessionID": "%d"
-			# 	}} % (user_info[id], user_info[name], user_info[nickname], user_info[email], sessionID)
-			# )
-			#==================================================================
-		else:
-			self.write("failed")
 
 class LogoutHandler(tornado.web.RequestHandler):
 	"""RequestHandler for logout"""
@@ -130,7 +104,7 @@ class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
 			(r"/user/register", RegisterHandler),
-			(r"/user/login", LoginHandler),
+			(r"/user/login.json", LoginHandler),
 			(r"/user/logout", LogoutHandler),
 			(r"/user/change_userinfo", ChangeInfoHandler)
 		]
@@ -139,7 +113,7 @@ class Application(tornado.web.Application):
 			"static_path": "static"
 		}
 		self.db = MyDataBase()
-		self.users = Users()
+		#self.users = Users()
 		tornado.web.Application.__init__(self, handlers, **settings)
 		
 if __name__ == "__main__":
