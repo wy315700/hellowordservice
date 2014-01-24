@@ -40,11 +40,13 @@ class LoginHandler(tornado.web.RequestHandler):
         #            "password" : "password"
         #        }
         #    }
+        userName = ''
+        password = ''
         try:
             paramStr = self.get_argument("params");
 
             params = json.loads(paramStr);
-            if params['request'] != "/user/login.json":
+            if params['request'] == "/user/login.json":
                 userName = params['loginInfo']['userName']
 
 
@@ -54,13 +56,25 @@ class LoginHandler(tornado.web.RequestHandler):
             self.write("failed")
             return
         
-
         #=======================================
         user_info = self.application.db.find({"name": userName, "password": password})
         if user_info:
             sessionID = uuid4()
-            self.write(user_info)
-
+            print user_info
+            response = {
+                "request" : "/user/login.json",
+                "result": "success", 
+                "details": {
+                    "userInfo": {
+                        "userID": user_info['id'],
+                        "userName": user_info['name'],
+                        "userNickname": user_info['nickname'],
+                        "userEmail": user_info['email']
+                    },
+                    "sessionID": "111"
+                }
+            }
+            self.write(json.dumps(response))
             #============there're some problems with the json data===============
             # self.write({
             #     "request" : "/user/login.json",
