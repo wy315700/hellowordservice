@@ -17,6 +17,11 @@ import logging
 import traceback
 from uuid import uuid4
 
+import sys
+sys.path.append("./database/")
+import mysqlhelper
+
+
 class Users(object):
 	"""Handle with the users' operation"""
 	session_queue = []
@@ -57,38 +62,39 @@ class LoginHandler(tornado.web.RequestHandler):
             return
         
         #=======================================
-        user_info = self.application.db.find({"name": userName, "password": password})
-        if user_info:
-            sessionID = uuid4()
-            print user_info
+        try:
+            user = mysqlhelper.UserInfo()
+
+            result = user.getUserInfoByName(userName)
+            if result == 0:
+                if password != user.password:
+                    raise Exception
+                sessionID = str(uuid4())
+                response = {
+                    "request" : "/user/login.json",
+                    "result": "success", 
+                    "details": {
+                        "userInfo": {
+                            "userID": user.userID,
+                            "userName": user.userName,
+                            "userNickname": user.userNickname,
+                            "userEmail": user.userEmail
+                        },
+                        "sessionID": sessionID
+                    }
+                }
+                self.write(json.dumps(response))
+                return
+            else:
+                raise Exception
+        except Exception, e:
             response = {
                 "request" : "/user/login.json",
-                "result": "success", 
+                "result": "failed", 
                 "details": {
-                    "userInfo": {
-                        "userID": user_info['id'],
-                        "userName": user_info['name'],
-                        "userNickname": user_info['nickname'],
-                        "userEmail": user_info['email']
-                    },
-                    "sessionID": "111"
+                    "errorCode" : "20001",
+                    "error" : "login failed"
                 }
             }
+            logging.warning(traceback.format_exc())
             self.write(json.dumps(response))
-            #============there're some problems with the json data===============
-            # self.write({
-            #     "request" : "/user/login.json",
-            #     "result": "success", 
-            #     "details": {
-            #         "userInfo": {
-            #             "userID": "%d",
-            #             "userName": "%f",
-            #             "userNickname": "%f",
-            #             "userEmail": "%f"
-            #         },
-            #         "sessionID": "%d"
-            #     }} % (user_info[id], user_info[name], user_info[nickname], user_info[email], sessionID)
-            # )
-            #==================================================================
-        else:
-            self.write("failed")
