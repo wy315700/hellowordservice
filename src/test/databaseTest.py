@@ -28,6 +28,12 @@ class TestSequenceFunctions(unittest.TestCase):
 
         result = self.user.getUserInfoByName("bb")
         self.assertEqual(result,-1)
+
+    def test_save_user(self):
+
+        self.user.setUserInfo("1", "2", "3", "4")
+        result = self.user.saveUserInfo()
+        self.assertNotEqual(result,-1)
         
     
 

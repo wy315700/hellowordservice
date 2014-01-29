@@ -92,7 +92,7 @@ class LoginHandler(tornado.web.RequestHandler):
                 "request" : "/user/login.json",
                 "result": "failed", 
                 "details": {
-                    "errorCode" : "20001",
+                    "errorCode" : "20101",
                     "error" : "login failed"
                 }
             }

@@ -29,30 +29,34 @@ class UserInfo():
         if self.db:
             self.db.close()
 
-    def setUserInfo(self, userName, password, userEmail):
-        self.userName = userName
-        self.password = password
-        self.userEmail= userEmail
+    def setUserInfo(self, userName, password, userEmail, userNickname):
+        self.userName = MySQLdb.escape_string(userName)
+        self.password = MySQLdb.escape_string(password)
+        self.userEmail= MySQLdb.escape_string(userEmail)
+        self.userNickname= MySQLdb.escape_string(userNickname)
     
     def saveUserInfo(self):
         sql = """INSERT INTO userinfo(userName,
-         password, userEmail)
-         VALUES ('%s', '%s', '%s')""" % (self.userName,self.password, self.userEmail)
+         password, userEmail, userNickname)
+         VALUES ('%s', '%s', '%s', '%s')""" % (self.userName,self.password, self.userEmail, self.userNickname)
         logging.debug(sql)
         try:
                # Execute the SQL command
                self.cursor.execute(sql)
                # Commit your changes in the database
+               userID = self.db.insert_id()
                self.db.commit()
+               return userID
         except:
                # Rollback in case there is any error
                self.db.rollback()
+               return -1
 
     def getUserInfoByName(self, userName):
         if not userName:
             """an error handle"""
             return -1
-
+        userName = MySQLdb.escape_string(userName)
        	sql =  "SELECT * FROM userinfo \
                 WHERE userName = '%s'" % (userName)
         logging.debug(sql)
