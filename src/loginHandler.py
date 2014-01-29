@@ -88,13 +88,17 @@ class LoginHandler(tornado.web.RequestHandler):
             else:
                 raise Exception
         except Exception, e:
-            response = {
+            logging.warning(traceback.format_exc())
+            printError("20101", "login failed")
+
+    def printError(self,errorCode, error):
+        response = {
                 "request" : "/user/login.json",
                 "result": "failed", 
                 "details": {
-                    "errorCode" : "20101",
-                    "error" : "login failed"
+                    "errorCode" : errorCode,
+                    "error" : error
                 }
             }
-            logging.warning(traceback.format_exc())
-            self.write(json.dumps(response))
+        logging.warning(traceback.format_exc())
+        self.write(json.dumps(response))
