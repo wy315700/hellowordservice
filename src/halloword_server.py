@@ -19,7 +19,7 @@ define("port", default = 8000, help = "run on the given port",type = int)
 
 
 from loginHandler import LoginHandler
-
+from registerHandler import RegisterHandler
 class Users(object):
 	"""Handle with the users' operation"""
 	session_queue = []
@@ -62,24 +62,7 @@ class LogoutHandler(tornado.web.RequestHandler):
 		current_ssID = self.get_argument(sessionID)
 		self.application.session_queue.remove(current_ssID)
 
-class RegisterHandler(tornado.web.RequestHandler):
-	"""RequestHandler for register"""
-	def post(self):
-		user_name = self.get_argument("userName")
-		password = self.get_argument("password")
-		user_nickname = self.get_argument("userNickname")
-		user_email = self.get_argument("userEmail")
-		user_info = self.application.db.find({"name": user_name})
-		if user_info:
-			self.write("duplicate name exists")
-		else:
-			self.application.db.add({
-				"name": user_name,
-				"id": user_email,
-				"password": password,
-				"nickname": user_nickname,
-				"email": user_email
-			})
+
 
 class ChangeInfoHandler(tornado.web.RequestHandler):
 	"""RequestHandler for Changing users' information"""
@@ -103,7 +86,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
 class Application(tornado.web.Application):
 	def __init__(self):
 		handlers = [
-			(r"/user/register", RegisterHandler),
+			(r"/user/register.json", RegisterHandler),
 			(r"/user/login.json", LoginHandler),
 			(r"/user/logout", LogoutHandler),
 			(r"/user/change_userinfo", ChangeInfoHandler)
