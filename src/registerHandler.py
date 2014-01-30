@@ -66,21 +66,7 @@ class RegisterHandler(tornado.web.RequestHandler):
             userID = user.saveUserInfo()
             if userID > 0:
                 sessionID = str(uuid4())
-                response = {
-                        "request" : "/user/register.json",
-                        "result"  : "success",
-                        "details" : {
-                            "userInfo":{
-                                "userID" : userID,
-                                "userName" : userName,
-                                "userNickname" : userNickname,
-                                "userEmail" : userEmail
-                                },
-            
-                            "sessionID" : sessionID
-                        } 
-                    }
-                self.write(json.dumps(response))
+                self.printSuccess(userID, user.userName, user.userNickname, user.userEmail, sessionID)
                 return
             else:
                 raise Exception
@@ -88,6 +74,22 @@ class RegisterHandler(tornado.web.RequestHandler):
             self.printError('20101', 'register failed!')
 
             logging.warning(traceback.format_exc())
+
+    def printSuccess(self,userID,userName,userNickname, userEmail, sessionID):
+        response = {
+            "request" : "/user/register.json",
+            "result"  : "success",
+            "details" : {
+                "userInfo":{
+                    "userID" : userID,
+                    "userName" : userName,
+                    "userNickname" : userNickname,
+                    "userEmail" : userEmail
+                    },
+                    "sessionID" : sessionID
+                } 
+            }
+        self.write(json.dumps(response))
 
     def printError(self,errorCode, error):
         response = {
