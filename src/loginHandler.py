@@ -70,27 +70,29 @@ class LoginHandler(tornado.web.RequestHandler):
                 if password != user.password:
                     raise Exception
                 sessionID = str(uuid4())
-                response = {
-                    "request" : "/user/login.json",
-                    "result": "success", 
-                    "details": {
-                        "userInfo": {
-                            "userID": user.userID,
-                            "userName": user.userName,
-                            "userNickname": user.userNickname,
-                            "userEmail": user.userEmail
-                        },
-                        "sessionID": sessionID
-                    }
-                }
-                self.write(json.dumps(response))
+                self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail, sessionID)
                 return
             else:
                 raise Exception
         except Exception, e:
             logging.warning(traceback.format_exc())
-            printError("20101", "login failed")
+            self.printError("20101", "login failed")
 
+    def printSuccess(self,userID,userName,userNickname, userEmail, sessionID):
+        response = {
+                    "request" : "/user/login.json",
+                    "result": "success", 
+                    "details": {
+                        "userInfo": {
+                            "userID": userID,
+                            "userName": userName,
+                            "userNickname": userNickname,
+                            "userEmail": userEmail
+                        },
+                        "sessionID": sessionID
+                    }
+                }
+        self.write(json.dumps(response))
     def printError(self,errorCode, error):
         response = {
                 "request" : "/user/login.json",
