@@ -34,7 +34,12 @@ class TestSequenceFunctions(unittest.TestCase):
         self.user.setUserInfo("1", "2", "3", "4")
         result = self.user.saveUserInfo()
         self.assertNotEqual(result,-1)
-        
+    
+    def test_update_user(self):
+
+        self.user.setUserInfo("1", "22", "33", "44")
+        result = self.user.updateUserInfo()
+        self.assertNotEqual(result,-1)
     
 
 

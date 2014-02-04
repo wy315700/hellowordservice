@@ -52,6 +52,26 @@ class UserInfo():
                self.db.rollback()
                return -1
 
+    def updateUserInfo(self):
+        sql = """update userinfo set 
+         password = '%s', userNickname = '%s'
+         where userName = '%s' """ % (self.password, self.userNickname, self.userName)
+        logging.debug(sql)
+        try:
+            # Execute the SQL command
+            self.cursor.execute(sql)
+            # Commit your changes in the database
+            num = self.db.affected_rows()
+            if num != 1:
+                raise Exception
+            self.db.commit()
+            return 0
+        except:
+            # Rollback in case there is any error
+            logging.warning(traceback.format_exc())
+            self.db.rollback()
+            return -1
+
     def getUserInfoByName(self, userName):
         if not userName:
             """an error handle"""
