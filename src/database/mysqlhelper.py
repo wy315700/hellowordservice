@@ -105,6 +105,110 @@ class UserInfo():
             self.db.rollback()
             return -1
 
+    def getUserInfoByID(self, userID):
+        if not userID:
+            """an error handle"""
+            return -1
+        userID = MySQLdb.escape_string(userID)
+        sql =  "SELECT * FROM userinfo \
+                WHERE userID = '%s'" % (userID)
+        logging.debug(sql)
+        try:
+            # Execute the SQL command
+            self.cursor.execute(sql)
+            # Fetch all the rows in a list of lists.
+            results = self.cursor.fetchall()
+            if len(results) != 1:
+                raise Exception
+
+            row = results[0]
+            self.userID   = row['userID']
+            self.userName = row['userName']
+            self.password = row['password']
+            self.userEmail= row['userEmail']
+            self.userNickname = row['userNickname']
+            # Now print fetched result
+            logging.debug("userName=%s,password=%s,userEmail=%s" % \
+            (self.userName, self.password, self.userEmail) )
+            return 0
+        except:
+            print "Error: unable to fecth data"
+            logging.warning(traceback.format_exc())
+            # Rollback in case there is any error
+            self.db.rollback()
+            return -1
+
+    def getUserIDBySession(self, sessionID):
+        sessionID = MySQLdb.escape_string(sessionID)
+
+        sql =  "SELECT * FROM sessions \
+                WHERE sessionID = '%s'" % (sessionID)
+        logging.debug(sql)
+        try:
+            # Execute the SQL command
+            self.cursor.execute(sql)
+            # Fetch all the rows in a list of lists.
+            results = self.cursor.fetchall()
+            if len(results) == 0 :
+                raise Exception
+
+            row = results[0]
+            self.userID   = row['userID']
+            # Now print fetched result
+            return 0
+        except:
+            print "Error: unable to fecth data"
+            logging.warning(traceback.format_exc())
+            # Rollback in case there is any error
+            self.db.rollback()
+            return -1
+
+    def deleteSessionByUserID(self, userID):
+        sql = "DELETE FROM sessions WHERE userID='%s'" % (userID)
+
+        logging.debug(sql)
+        try:
+               # Execute the SQL command
+               self.cursor.execute(sql)
+               # Commit your changes in the database
+               self.db.commit()
+               return 0
+        except:
+               # Rollback in case there is any error
+               logging.warning(traceback.format_exc())
+               self.db.rollback()
+               return -1
+    def deleteSessionBySessionID(self, sessionID):
+        sql = "DELETE FROM sessions WHERE sessionID='%s'" % (sessionID)
+
+        logging.debug(sql)
+        try:
+               # Execute the SQL command
+               self.cursor.execute(sql)
+               # Commit your changes in the database
+               self.db.commit()
+               return 0
+        except:
+               # Rollback in case there is any error
+               logging.warning(traceback.format_exc())
+               self.db.rollback()
+               return -1
+
+    def createSession(self, sessionID, userID):
+        sql = """INSERT INTO sessions(sessionID,
+         userID) VALUES ('%s', '%s')""" % (sessionID,userID)
+        logging.debug(sql)
+        try:
+               # Execute the SQL command
+               self.cursor.execute(sql)
+               # Commit your changes in the database
+               self.db.commit()
+               return 0
+        except:
+               # Rollback in case there is any error
+               logging.warning(traceback.format_exc())
+               self.db.rollback()
+               return -1
         
 
 
