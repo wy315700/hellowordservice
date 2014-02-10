@@ -109,6 +109,8 @@ class UserInfo():
         if not userID:
             """an error handle"""
             return -1
+        if isinstance(userID, long):
+          userID = str(userID)
         userID = MySQLdb.escape_string(userID)
         sql =  "SELECT * FROM userinfo \
                 WHERE userID = '%s'" % (userID)
@@ -154,6 +156,7 @@ class UserInfo():
 
             row = results[0]
             self.userID   = row['userID']
+            self.getUserInfoByID(self.userID)
             # Now print fetched result
             return 0
         except:

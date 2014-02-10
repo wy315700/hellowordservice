@@ -45,34 +45,36 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
         oldPassword  = ''
         newPassword  = ''
         userEmail    = ''
-        try:
-            paramStr = self.get_argument("params");
 
-            params = json.loads(paramStr);
+        userSession  = ''
+        try:
+            paramStr = self.get_argument("params")
+
+            params = json.loads(paramStr)
             if params['request'] == "/user/change_userinfo.json":
+                userSession  = params['sessionID']
                 userName     = params['userInfo']['userName']
                 userNickname = params['userInfo']['userNickname']
                 oldPassword  = params['userInfo']['oldPassword']
                 newPassword  = params['userInfo']['newPassword']
         except Exception, e:
             logging.warning(traceback.format_exc())
-            self.write("failed")
+            self.printError("10001", "params error")
             return
         
         #=======================================
         try:
             user = mysqlhelper.UserInfo()
 
-            result = user.getUserInfoByName(userName)
+            result = user.getUserIDBySession(userSession)
             if result == 0:
                 if oldPassword != user.password:
                     raise Exception
-                sessionID = str(uuid4())
                 user.setUserInfo(userName, newPassword, userEmail, userNickname)
                 result = user.updateUserInfo()
                 if result == 0:
-                    sessionID = str(uuid4())
-                    self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail, sessionID)
+                    #sessionID = str(uuid4())
+                    self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail)
                     return
                 else:
                     raise Exception
@@ -82,7 +84,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20201", "change userInfo failed")
 
-    def printSuccess(self,userID,userName,userNickname, userEmail, sessionID):
+    def printSuccess(self,userID,userName,userNickname, userEmail):
         response = {
                     "request" : "/user/change_userinfo.json",
                     "result": "success", 
@@ -92,8 +94,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
                             "userName": userName,
                             "userNickname": userNickname,
                             "userEmail": userEmail
-                        },
-                        "sessionID": sessionID
+                        }
                     }
                 }
         self.write(json.dumps(response))
