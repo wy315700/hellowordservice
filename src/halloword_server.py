@@ -20,6 +20,9 @@ define("port", default = 8000, help = "run on the given port",type = int)
 
 from loginHandler import LoginHandler
 from registerHandler import RegisterHandler
+from changeInfoHandler import ChangeInfoHandler
+from longpolldemo import MessageUpdatesHandler
+
 class Users(object):
 	"""Handle with the users' operation"""
 	session_queue = []
@@ -62,25 +65,6 @@ class LogoutHandler(tornado.web.RequestHandler):
 		current_ssID = self.get_argument(sessionID)
 		self.application.session_queue.remove(current_ssID)
 
-
-
-class ChangeInfoHandler(tornado.web.RequestHandler):
-	"""RequestHandler for Changing users' information"""
-	def post(self):
-		user_name = self.get_argument("userName")
-		user_nickname = self.get_argument("userNickname")
-		old_password = self.get_argument("oldPassword")
-		new_password = self.get_argument("newPassword")
-		#???users may change email???
-		#user_email = self.get_argument("userEmail")
-		#????????????????
-
-		user_info = self.application.db.find({"name": user_name, "password": old_password})
-		if user_info:
-			self.application.db.modify({"name": user_name, "password": new_password, "nickname": user_nickname})
-			return True
-		else: 
-			return False
 		
 
 class Application(tornado.web.Application):
@@ -88,8 +72,9 @@ class Application(tornado.web.Application):
 		handlers = [
 			(r"/user/register.json", RegisterHandler),
 			(r"/user/login.json", LoginHandler),
-			(r"/user/logout", LogoutHandler),
-			(r"/user/change_userinfo", ChangeInfoHandler)
+			(r"/user/logout.json", LogoutHandler),
+			(r"/user/change_userinfo.json", ChangeInfoHandler),
+			(r"/helloword/game.json", MessageUpdatesHandler)
 		]
 		settings = {
 			"template_path": "templates",

@@ -58,7 +58,7 @@ class LoginHandler(tornado.web.RequestHandler):
                 password = params['loginInfo']['password']
         except Exception, e:
             logging.warning(traceback.format_exc())
-            self.write("failed")
+            self.printError("10001", "params error")
             return
         
         #=======================================
@@ -70,6 +70,8 @@ class LoginHandler(tornado.web.RequestHandler):
                 if password != user.password:
                     raise Exception
                 sessionID = str(uuid4())
+                user.deleteSessionByUserID(user.userID)
+                user.createSession(sessionID,user.userID)
                 self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail, sessionID)
                 return
             else:
