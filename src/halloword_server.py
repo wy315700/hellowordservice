@@ -21,6 +21,8 @@ define("port", default = 8000, help = "run on the given port",type = int)
 from loginHandler import LoginHandler
 from registerHandler import RegisterHandler
 from changeInfoHandler import ChangeInfoHandler
+from longpolldemo import MessageUpdatesHandler
+
 class Users(object):
 	"""Handle with the users' operation"""
 	session_queue = []
@@ -71,7 +73,8 @@ class Application(tornado.web.Application):
 			(r"/user/register.json", RegisterHandler),
 			(r"/user/login.json", LoginHandler),
 			(r"/user/logout.json", LogoutHandler),
-			(r"/user/change_userinfo.json", ChangeInfoHandler)
+			(r"/user/change_userinfo.json", ChangeInfoHandler),
+			(r"/helloword/game.json", MessageUpdatesHandler)
 		]
 		settings = {
 			"template_path": "templates",
