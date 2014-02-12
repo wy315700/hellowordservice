@@ -13,7 +13,7 @@ import urllib,urllib2
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.url = 'http://127.0.0.1:8000/user/change_userinfo.json'
+        self.url = 'http://halloword.sinaapp.com/user/change_userinfo.json'
 
     def test_failed_json(self):
 

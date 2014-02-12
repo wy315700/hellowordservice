@@ -13,59 +13,59 @@ import urllib,urllib2
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.url = 'http://127.0.0.1:8000/user/register.json'
+        self.url = 'http://halloword.sinaapp.com/user/register.json'
 
-    def test_failed_json(self):
+    # def test_failed_json(self):
 
-        values ={'parms' : ' \
-        {\
-            "request" : "/user/register.json",\
-            "userInfo" : {\
-                "userName" : "123",\
-                "password" : "aaaaaa",\
-                "userNickname" : "asas"\
-            }\
-        }\
-        '}
-        data = urllib.urlencode(values)
-        req = urllib2.Request(self.url, data)
-        try:
-            req = urllib2.Request(self.url, data)
-            response = urllib2.urlopen(req)
-            httpcode = response.getcode()
-            self.assertEqual(httpcode,200)
-            self.assertIn('failed',response.read())
-        except urllib2.HTTPError, e:
-            print e.code
-            self.assertEqual(1,0)
-        except urllib2.URLError, e:
-            print e.reason
+    #     values ={'parms' : ' \
+    #     {\
+    #         "request" : "/user/register.json",\
+    #         "userInfo" : {\
+    #             "userName" : "123",\
+    #             "password" : "aaaaaa",\
+    #             "userNickname" : "asas"\
+    #         }\
+    #     }\
+    #     '}
+    #     data = urllib.urlencode(values)
+    #     req = urllib2.Request(self.url, data)
+    #     try:
+    #         req = urllib2.Request(self.url, data)
+    #         response = urllib2.urlopen(req)
+    #         httpcode = response.getcode()
+    #         self.assertEqual(httpcode,200)
+    #         self.assertIn('failed',response.read())
+    #     except urllib2.HTTPError, e:
+    #         print e.code
+    #         self.assertEqual(1,0)
+    #     except urllib2.URLError, e:
+    #         print e.reason
 
-    def test_failed_params(self):
+    # def test_failed_params(self):
 
-        values ={'params' : ' \
-        {\
-            "equest" : "/user/register.json",\
-            "userInfo" : {\
-                "userName" : "123",\
-                "password" : "aaaaaa",\
-                "userNickname" : "asas"\
-            }\
-        }\
-        '}
-        data = urllib.urlencode(values)
-        req = urllib2.Request(self.url, data)
-        try:
-            req = urllib2.Request(self.url, data)
-            response = urllib2.urlopen(req)
-            httpcode = response.getcode()
-            self.assertEqual(httpcode,200)
-            self.assertIn('failed',response.read())
-        except urllib2.HTTPError, e:
-            print e.code
-            self.assertEqual(1,0)
-        except urllib2.URLError, e:
-            print e.reason
+    #     values ={'params' : ' \
+    #     {\
+    #         "equest" : "/user/register.json",\
+    #         "userInfo" : {\
+    #             "userName" : "123",\
+    #             "password" : "aaaaaa",\
+    #             "userNickname" : "asas"\
+    #         }\
+    #     }\
+    #     '}
+    #     data = urllib.urlencode(values)
+    #     req = urllib2.Request(self.url, data)
+    #     try:
+    #         req = urllib2.Request(self.url, data)
+    #         response = urllib2.urlopen(req)
+    #         httpcode = response.getcode()
+    #         self.assertEqual(httpcode,200)
+    #         self.assertIn('failed',response.read())
+    #     except urllib2.HTTPError, e:
+    #         print e.code
+    #         self.assertEqual(1,0)
+    #     except urllib2.URLError, e:
+    #         print e.reason
 
     def test_success_register(self):
 
