@@ -12,13 +12,20 @@ import logging
 import traceback
 from uuid import uuid4
 
-
+try:
+  import sae
+  isSae = True
+except Exception, e:
+  isSae = False
 
         
 class UserInfo():
     def __init__(self):
         """connection for the database"""
-        self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword" )
+        if isSae:
+          self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307)
+        else:
+          self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword" )
         self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
         self.userName = ''
         self.password = ''
