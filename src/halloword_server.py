@@ -22,6 +22,7 @@ from loginHandler import LoginHandler
 from registerHandler import RegisterHandler
 from changeInfoHandler import ChangeInfoHandler
 from longpolldemo import MessageUpdatesHandler
+from gameHandler import RequestGameHandler, RequestRankHandler,UploadResultHandler,UserLogoutHandler
 
 class Users(object):
 	"""Handle with the users' operation"""
@@ -74,7 +75,12 @@ class Application(tornado.web.Application):
 			(r"/user/login.json", LoginHandler),
 			(r"/user/logout.json", LogoutHandler),
 			(r"/user/change_userinfo.json", ChangeInfoHandler),
-			(r"/helloword/game.json", MessageUpdatesHandler)
+			(r"/helloword/game.json", MessageUpdatesHandler),
+			(r"/helloword/request_game.json", RequestGameHandler),
+			(r"/helloword/upload_result.json", RequestRankHandler),
+			(r"/helloword/request_rank.json", UploadResultHandler),
+			(r"/helloword/user_logout.json", UserLogoutHandler),
+			
 		]
 		settings = {
 			"template_path": "templates",
