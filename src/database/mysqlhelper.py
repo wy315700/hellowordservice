@@ -219,10 +219,8 @@ class UserInfo():
                logging.warning(traceback.format_exc())
                self.db.rollback()
                return -1
-        
-
-
-
+    
+    
 
         
 if __name__ == "__main__":
