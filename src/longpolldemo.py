@@ -48,7 +48,7 @@ class MessageBuffer(object):
         logging.info("Sending new message to %r listeners", len(self.waiters))
         for callback in self.waiters:
             try:
-                callback(messages)
+                callback(messages,True)
             except:
                 logging.error("Error in waiter callback", exc_info=True)
         self.waiters = set()
@@ -64,25 +64,44 @@ global_message_buffer = MessageBuffer()
 class BaseHandler(tornado.web.RequestHandler):
     pass
 
-
+class MessageNewHandler(BaseHandler):
+    def get(self):
+        message = {
+            "request" : "/helloword/get_message.json",
+            "result"  : "success",
+            "details" : {
+                "title" : "aa",
+                "content" : "bb"
+            }
+        }
+        # to_basestring is necessary for Python 3's json encoder,
+        # which doesn't accept byte strings.
+        message = json.dumps(message)
+        if self.get_argument("next", None):
+            self.redirect(self.get_argument("next"))
+        else:
+            self.write(message)
+        global_message_buffer.new_messages([message])
 
 class MessageUpdatesHandler(BaseHandler):
     @tornado.web.asynchronous
     def post(self):
         cursor = self.get_argument("cursor", None)
-
+        self.gameID = 0
         if self.get_params() == -1:
             return
 
         global_message_buffer.wait_for_messages(self.on_new_messages,
-                                                cursor=cursor, gameID=self.gameID)
+                                                cursor=cursor)
 
     def on_new_messages(self, messages, success=False):
         # Closed client connection
         if self.request.connection.stream.closed():
             return
         if success:
-            self.printSuccess()
+            for message in messages:
+                self.write(message)
+            self.finish()
         else:
             self.printError('20401', 'game error!')
 
@@ -110,9 +129,9 @@ class MessageUpdatesHandler(BaseHandler):
         try:
             paramStr = self.get_argument("params");
             params = json.loads(paramStr);
-            if params['request'] == "/helloword/game.json":
+            print params
+            if params['request'] == "/helloword/get_message.json":
                 self.sessionID = params['sessionID']
-                self.gameID    = params['gameID']
                 return 0
             else:
                 raise Exception
