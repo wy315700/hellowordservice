@@ -25,11 +25,9 @@ import mysqlhelper
 
 class MessageBuffer(object):
     def __init__(self):
-        self.waiters = set()
-        self.cache = []
-        self.cache_size = 200
+        self.waiters = dict()
 
-    def wait_for_messages(self, callback, cursor=None):
+    def wait_for_messages(self, callback, sessionID):
         # if cursor:
         #     new_count = 0
         #     for msg in reversed(self.cache):
@@ -39,22 +37,32 @@ class MessageBuffer(object):
         #     if new_count:
         #         callback(self.cache[-new_count:])
         #         return
-        self.waiters.add(callback)
+        if sessionID != None:
+            self.waiters[sessionID] = callback
 
-    def cancel_wait(self, callback):
-        self.waiters.remove(callback)
+    def cancel_wait(self, sessionID,callback = None):
+        #self.waiters.remove(callback)
+        if sessionID in self.waiters:
+            del self.waiters[sessionID]
 
-    def new_messages(self, messages):
+    def new_messages(self, message, sessionID = None):
         logging.info("Sending new message to %r listeners", len(self.waiters))
-        for callback in self.waiters:
+
+        if sessionID ==None :
+            for callback in self.waiters.values():
+                try:
+                    callback(message,True)
+                except:
+                    logging.error("Error in waiter callback", exc_info=True)
+            self.waiters = dict()
+        else:
             try:
-                callback(messages,True)
+                callback = self.waiters[sessionID]
+                callback(message,True)
+                del self.waiters[sessionID]
             except:
                 logging.error("Error in waiter callback", exc_info=True)
-        self.waiters = set()
-        self.cache.extend(messages)
-        if len(self.cache) > self.cache_size:
-            self.cache = self.cache[-self.cache_size:]
+            
 
 
 # Making this a non-singleton is left as an exercise for the reader.
@@ -65,7 +73,19 @@ class BaseHandler(tornado.web.RequestHandler):
     pass
 
 class MessageNewHandler(BaseHandler):
-    def get(self):
+    '''
+    {
+        "request" : "/helloword/new_message.json",
+        "messageType" : "",
+        "title" : ",
+        "content" : ""
+    }
+    '''
+    def post(self):
+
+        if self.get_params() == -1:
+            return
+
         message = {
             "request" : "/helloword/get_message.json",
             "result"  : "success",
@@ -77,30 +97,61 @@ class MessageNewHandler(BaseHandler):
         # to_basestring is necessary for Python 3's json encoder,
         # which doesn't accept byte strings.
         message = json.dumps(message)
-        if self.get_argument("next", None):
-            self.redirect(self.get_argument("next"))
+        if self.toSessionID != "all":
+            global_message_buffer.new_messages(message,self.toSessionID)
         else:
-            self.write(message)
-        global_message_buffer.new_messages([message])
+            global_message_buffer.new_messages(message)
+
+        self.printSuccess()
+
+
+    def get_params(self):
+        try:
+            paramStr = self.get_argument("params");
+            params = json.loads(paramStr);
+            if params['request'] == "/helloword/new_message.json":
+                self.messageType = params['messageType']
+                self.title       = params['title']
+                self.content     = params['content']
+                self.toSessionID = params['toSessionID']
+                return 0
+            else:
+                raise Exception
+        except Exception, e:
+            logging.warning(traceback.format_exc())
+            self.printError("10001", "params error")
+            return -1
+
+    def printSuccess(self):
+        response = {
+                    "request" : "/helloword/new_message.json",
+                    "result": "success"
+                }
+        self.write(json.dumps(response))
+    def printError(self,errorCode, error):
+        response = {
+                "request" : "/helloword/new_message.json",
+                "result": "failed"
+            }
+        logging.warning(traceback.format_exc())
+        self.write(json.dumps(response))
 
 class MessageUpdatesHandler(BaseHandler):
     @tornado.web.asynchronous
     def post(self):
-        cursor = self.get_argument("cursor", None)
         self.gameID = 0
         if self.get_params() == -1:
             return
 
         global_message_buffer.wait_for_messages(self.on_new_messages,
-                                                cursor=cursor)
+                                                self.sessionID)
 
-    def on_new_messages(self, messages, success=False):
+    def on_new_messages(self, message, success=False):
         # Closed client connection
         if self.request.connection.stream.closed():
             return
         if success:
-            for message in messages:
-                self.write(message)
+            self.write(message)
             self.finish()
         else:
             self.printError('20401', 'game error!')
@@ -129,9 +180,12 @@ class MessageUpdatesHandler(BaseHandler):
         try:
             paramStr = self.get_argument("params");
             params = json.loads(paramStr);
-            print params
             if params['request'] == "/helloword/get_message.json":
                 self.sessionID = params['sessionID']
+
+                if self.get_user_by_sessions() != 0:
+                    return -1
+
                 return 0
             else:
                 raise Exception
@@ -152,7 +206,7 @@ class MessageUpdatesHandler(BaseHandler):
         self.finish()
     def printError(self,errorCode, error):
         response = {
-                "request" : "/helloword/game.json",
+                "request" : "/helloword/get_message.json",
                 "result": "failed", 
                 "details": {
                     "errorCode" : errorCode,
