@@ -15,8 +15,8 @@ import time
 class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
-        self.get_message_url = 'http://127.0.0.1:8000/helloword/get_message.json'
-        self.new_message_url = 'http://127.0.0.1:8000/helloword/new_message.json'
+        self.get_message_url = 'http://halloword.sinaapp.com/helloword/get_message.json'
+        self.new_message_url = 'http://halloword.sinaapp.com/helloword/new_message.json'
 
     def test_case(self):
         get_message = multiprocessing.Process(name='get_message',
@@ -25,7 +25,7 @@ class TestSequenceFunctions(unittest.TestCase):
         new_message = multiprocessing.Process(name='new_message',
                                       target=self.new_message)
 
-        get_message.start()
+      #  get_message.start()
         time.sleep(2)
         new_message.start()
 
