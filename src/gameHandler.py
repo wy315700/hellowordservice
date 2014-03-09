@@ -315,3 +315,177 @@ class UserLogoutHandler(tornado.web.RequestHandler):
             }
         logging.warning(traceback.format_exc())
         self.write(json.dumps(response))
+
+
+class RequestPKGameHandler(tornado.web.RequestHandler):
+    """RequestHandler for login"""
+    def post(self):
+        #=======need further modification for json dict structure========
+        #=======it is easy to test with current writing
+        
+
+        #{
+        #"request" : "/helloword/request_game.json",
+        #"sessionID"  : "",
+        #"gameType" : ""
+        #}
+        sessionID = ''
+        gameType = ''
+        try:
+            paramStr = self.get_argument("params");
+
+            params = json.loads(paramStr);
+            if params['request'] == "/helloword/request_pk_game.json":
+                sessionID = params['sessionID']
+
+
+                gameType = params['gameType']
+        except Exception, e:
+            logging.warning(traceback.format_exc())
+            self.printError("10001", "params error")
+            return
+        
+        #=======================================
+        try:
+            user = mysqlhelper.UserInfo()
+
+            result = user.getUserIDBySession(sessionID)
+            if result == 0:
+                ## 产生题目
+                self.printSuccess()
+                return
+            else:
+                raise Exception
+        except Exception, e:
+            logging.warning(traceback.format_exc())
+            self.printError("20101", "login failed")
+
+    def printSuccess(self):
+        response = {
+                    "request" : "/helloword/request_pk_game.json",
+                    "result"  : "success",
+                    "details" : {
+                        "num" : "10",
+                        "gameID" : "",
+                        "games" : [
+                        {
+                            "description":"aaa",
+                            "ans1" : "1",
+                            "ans2" : "2",
+                            "ans3" : "3",
+                            "ans4" : "4",
+                            "point" : "5", #分值
+                            "ans"   :  "a",
+                            "time"  : "5",
+                            "enemyTime" : "3",
+                            "enemyAns" : "a"
+                        },
+                        {
+                            "description":"bbb",
+                            "ans1" : "1",
+                            "ans2" : "2",
+                            "ans3" : "3",
+                            "ans4" : "4",
+                            "point" : "5", #分值
+                            "time"  : "5",
+                            "ans"   :  "a",
+                            "time"  : "5",
+                            "enemyTime" : "3",
+                            "enemyAns" : "a"
+                        }
+                        ]
+                    } 
+                }
+        self.write(json.dumps(response))
+    def printError(self,errorCode, error):
+        response = {
+                "request" : "/helloword/request_pk_game.json",
+                "result": "failed", 
+                "details": {
+                    "errorCode" : errorCode,
+                    "error" : error
+                }
+            }
+        logging.warning(traceback.format_exc())
+        self.write(json.dumps(response))
+
+
+
+class UploadPKResultHandler(tornado.web.RequestHandler):
+    """RequestHandler for login"""
+    def post(self):
+        #=======need further modification for json dict structure========
+        #=======it is easy to test with current writing
+        
+
+        #{
+        #"request" : "/helloword/upload_result.json",
+        #"sessionID" : "",
+        #"gameID"  : "",
+        #"userAnswer":[
+        #  {
+        #    "chosen" : "a",
+        #    "time"   : "5",
+        #    },
+        #  {
+        #    //
+        #  }
+        #]
+        #}
+        sessionID = ''
+        gameID = ''
+        userAnswer = []
+        try:
+            paramStr = self.get_argument("params");
+
+            params = json.loads(paramStr);
+            if params['request'] == "/helloword/upload_pk_result.json":
+                sessionID = params['sessionID']
+
+
+                gameType = params['gameType']
+
+                userAnswer = params['userAnswer']
+        except Exception, e:
+            logging.warning(traceback.format_exc())
+            self.printError("10001", "params error")
+            return
+        
+        #=======================================
+        try:
+            user = mysqlhelper.UserInfo()
+
+            result = user.getUserIDBySession(sessionID)
+            if result == 0:
+                ## 存储答案
+                self.printSuccess()
+                return
+            else:
+                raise Exception
+        except Exception, e:
+            logging.warning(traceback.format_exc())
+            self.printError("20101", "login failed")
+
+    def printSuccess(self):
+        response = {
+            "request" : "/helloword/upload_pk_result.json",
+            "result"  : "success",
+            "details" : {
+                "correct" : "2",
+                "incorrect" : "3",
+                "totalExp" :"20",
+                "userLevel" : "3"
+            } 
+        }
+        self.write(json.dumps(response))
+    def printError(self,errorCode, error):
+        response = {
+                "request" : "/helloword/upload_pk_result.json",
+                "result": "failed", 
+                "details": {
+                    "errorCode" : errorCode,
+                    "error" : error
+                }
+            }
+        logging.warning(traceback.format_exc())
+        self.write(json.dumps(response))
