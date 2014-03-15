@@ -20,7 +20,8 @@ from uuid import uuid4
 import sys
 sys.path.append("./database/")
 import mysqlhelper
-
+import random
+import copy
 
 class RequestGameHandler(tornado.web.RequestHandler):
     """RequestHandler for login"""
@@ -336,10 +337,11 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
 
             params = json.loads(paramStr);
             if params['request'] == "/helloword/request_pk_game.json":
-                sessionID = params['sessionID']
+                # sessionID = params['sessionID']
 
 
                 gameType = params['gameType']
+
         except Exception, e:
             logging.warning(traceback.format_exc())
             self.printError("10001", "params error")
@@ -349,10 +351,38 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
         try:
             user = mysqlhelper.UserInfo()
 
-            result = user.getUserIDBySession(sessionID)
+            # result = user.getUserIDBySession(sessionID)
+            result = 0
             if result == 0:
                 ## 产生题目
-                self.printSuccess()
+
+                pvpGameHander = mysqlhelper.PvpGameInfo()
+
+                ans = pvpGameHander.getGame(gameType,"10")
+
+                if ans != -1:
+
+                    examList = []
+
+                    for x in xrange(0,10):
+                        moreAns = self.getRandomAns(ans)
+                        examNode = {
+                            "description":moreAns['pro_description'],
+                            "ans1" : moreAns['pro_ans_a'],
+                            "ans2" : moreAns['pro_ans_b'],
+                            "ans3" : moreAns['pro_ans_c'],
+                            "ans4" : moreAns['pro_ans_d'],
+                            "point" : moreAns['pro_point'], #分值
+                            "ans"   :  moreAns['pro_ans'],
+                            "time"  : moreAns['pro_time'],
+                            "enemyTime" : "3",
+                            "enemyAns" : "a"
+                        }
+                        examList.append(examNode)
+
+
+                    self.printSuccess(examList)
+
                 return
             else:
                 raise Exception
@@ -360,40 +390,31 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20101", "login failed")
 
-    def printSuccess(self):
+    def getRandomAns(self,ans):
+        alphaList = ['a','b','c','d']
+        randomAnsList = copy.deepcopy(alphaList)
+        random.shuffle(randomAnsList)
+        result = copy.deepcopy(ans)
+        
+        for i in range(0,4):
+            result['pro_ans_' + alphaList[i] ] = ans['pro_ans_' + randomAnsList[i] ]
+
+            if randomAnsList[i] == alphaList[result['pro_ans']]:
+                result['pro_ans'] = i
+
+        return result
+
+
+
+
+    def printSuccess(self,examList):
         response = {
                     "request" : "/helloword/request_pk_game.json",
                     "result"  : "success",
                     "details" : {
                         "num" : "10",
-                        "gameID" : "",
-                        "games" : [
-                        {
-                            "description":"aaa",
-                            "ans1" : "1",
-                            "ans2" : "2",
-                            "ans3" : "3",
-                            "ans4" : "4",
-                            "point" : "5", #分值
-                            "ans"   :  "a",
-                            "time"  : "5",
-                            "enemyTime" : "3",
-                            "enemyAns" : "a"
-                        },
-                        {
-                            "description":"bbb",
-                            "ans1" : "1",
-                            "ans2" : "2",
-                            "ans3" : "3",
-                            "ans4" : "4",
-                            "point" : "5", #分值
-                            "time"  : "5",
-                            "ans"   :  "a",
-                            "time"  : "5",
-                            "enemyTime" : "3",
-                            "enemyAns" : "a"
-                        }
-                        ]
+                        "gameID" : "1111",
+                        "games" : examList
                     } 
                 }
         self.write(json.dumps(response))
