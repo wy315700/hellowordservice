@@ -23,9 +23,9 @@ class UserInfo():
     def __init__(self):
         """connection for the database"""
         if isSae:
-          self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307)
+          self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307,charset='utf8')
         else:
-          self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword" )
+          self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword",charset='utf8' )
         self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
         self.userName = ''
         self.password = ''
@@ -220,7 +220,51 @@ class UserInfo():
                self.db.rollback()
                return -1
     
+
+class PvpGameInfo():
+    def __init__(self):
+        """connection for the database"""
+        if isSae:
+          self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307,charset='utf8')
+        else:
+          self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword",charset='utf8')
+        self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
+        self.cursor.execute("set names utf8")
+
+    def __del__(self):
+        if self.cursor:
+            self.cursor.close()
+        if self.db:
+            self.db.close()
+
+    def getGame(self, gameType, num):
+        if not gameType:
+            """an error handle"""
+            return -1
+        if isinstance(gameType, long):
+          gameType = str(gameType)
+        gameType = MySQLdb.escape_string(gameType)
+        sql =  "SELECT * FROM test_exam LIMIT 0,1"
+        logging.info(sql)
+        try:
+            # Execute the SQL command
+            self.cursor.execute(sql)
+            # Fetch all the rows in a list of lists.
+            results = self.cursor.fetchall()
+
+            row = results[0]
+            
+            print row
+
+            return row
+        except:
+            print "Error: unable to fecth data"
+            logging.warning(traceback.format_exc())
+            # Rollback in case there is any error
+            self.db.rollback()
+            return -1
     
+
 
         
 if __name__ == "__main__":
