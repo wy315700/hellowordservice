@@ -11,6 +11,7 @@ import MySQLdb
 import logging
 import traceback
 from uuid import uuid4
+import random
 
 try:
   import sae
@@ -244,7 +245,19 @@ class PvpGameInfo():
         if isinstance(gameType, long):
           gameType = str(gameType)
         gameType = MySQLdb.escape_string(gameType)
-        sql =  "SELECT * FROM test_exam LIMIT 0,1"
+        min = 1
+        max = 3614 
+        
+        sql =  "SELECT * FROM exam_cet4 WHERE pro_id in ("
+
+          
+        for i in range(0,num):
+          sql += str(random.randint(min, max) )
+          if i != 9:
+            sql += ","
+
+        sql += ")"
+
         logging.info(sql)
         try:
             # Execute the SQL command
@@ -252,11 +265,7 @@ class PvpGameInfo():
             # Fetch all the rows in a list of lists.
             results = self.cursor.fetchall()
 
-            row = results[0]
-            
-            print row
-
-            return row
+            return results
         except:
             print "Error: unable to fecth data"
             logging.warning(traceback.format_exc())
