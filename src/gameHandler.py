@@ -358,14 +358,14 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
 
                 pvpGameHander = mysqlhelper.PvpGameInfo()
 
-                ans = pvpGameHander.getGame(gameType,"10")
+                ans = pvpGameHander.getGame(gameType,10)
 
                 if ans != -1:
 
                     examList = []
 
                     for x in xrange(0,10):
-                        moreAns = self.getRandomAns(ans)
+                        moreAns = self.getRandomAns(ans[x])
                         examNode = {
                             "description":moreAns['pro_description'],
                             "ans1" : moreAns['pro_ans_a'],
@@ -396,11 +396,12 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
         random.shuffle(randomAnsList)
         result = copy.deepcopy(ans)
         
+        result['pro_ans'] = ans['pro_ans_a']
+
         for i in range(0,4):
             result['pro_ans_' + alphaList[i] ] = ans['pro_ans_' + randomAnsList[i] ]
 
-            if randomAnsList[i] == alphaList[result['pro_ans']]:
-                result['pro_ans'] = i
+            
 
         return result
 
