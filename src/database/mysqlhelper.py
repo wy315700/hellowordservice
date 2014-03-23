@@ -245,10 +245,30 @@ class PvpGameInfo():
         if isinstance(gameType, long):
           gameType = str(gameType)
         gameType = MySQLdb.escape_string(gameType)
+
         min = 1
         max = 3614 
-        
-        sql =  "SELECT * FROM exam_cet4 WHERE pro_id in ("
+        if gameType == "1":
+          min = 1
+          max = 3614
+        elif gameType == "2":
+          min = 3615
+          max = 5158
+        elif gameType == "3":
+          min = 11442
+          max = 13532
+        elif gameType == "4":
+          min = 13533
+          max = 14142
+        elif gameType == "5":
+          min = 5159
+          max = 10055
+        elif gameType == "6":
+          min = 10056
+          max = 11441
+
+
+        sql =  "SELECT * FROM exam_list WHERE pro_id in ("
 
           
         for i in range(0,num):
