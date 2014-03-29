@@ -359,7 +359,6 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
                 pvpGameHander = mysqlhelper.PvpGameInfo()
 
                 ans = pvpGameHander.getGame(gameType,10)
-
                 if ans != -1:
 
                     examList = []

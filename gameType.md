@@ -4,3 +4,7 @@
 4 cet6 cn to en
 5 toefl en to cn
 6 toefl cn to en
+7 ielts en to cn
+8 ielts cn to en
+9 gre en to cn
+10 gre cn to en

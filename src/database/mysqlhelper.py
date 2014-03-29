@@ -238,6 +238,14 @@ class PvpGameInfo():
         if self.db:
             self.db.close()
 
+    def getMaxAndMinRowNum(self,tableName, rowName):
+      sql = "SELECT max(%s) as max , min(%s) as min FROM %s" %(rowName,rowName, tableName)
+      self.cursor.execute(sql)
+      # Fetch all the rows in a list of lists.
+      results = self.cursor.fetchall()
+      result = results[0]
+      return result['max'],result['min']
+
     def getGame(self, gameType, num):
         if not gameType:
             """an error handle"""
@@ -245,30 +253,26 @@ class PvpGameInfo():
         if isinstance(gameType, long):
           gameType = str(gameType)
         gameType = MySQLdb.escape_string(gameType)
+        tableList = {
+          "1" : "exam_cet4_en2zh",
+          "2" : "exam_cet4_zh2en",
+          "3" : "exam_cet6_en2zh",
+          "4" : "exam_cet6_zh2en",
+          "5" : "exam_toefl_en2zh",
+          "6" : "exam_toefl_zh2en",
+          "7" : "exam_ielts_en2zh",
+          "8" : "exam_ielts_zh2en",
+          "9" : "exam_gre_en2zh",
+          "10" : "exam_gre_zh2en",
+        }
+        if gameType not in ["1","2","3","4","5","6","7","8","9","10"]:
+          return -1
 
-        min = 1
-        max = 3614 
-        if gameType == "1":
-          min = 1
-          max = 3614
-        elif gameType == "2":
-          min = 3615
-          max = 5158
-        elif gameType == "3":
-          min = 11442
-          max = 13532
-        elif gameType == "4":
-          min = 13533
-          max = 14142
-        elif gameType == "5":
-          min = 5159
-          max = 10055
-        elif gameType == "6":
-          min = 10056
-          max = 11441
+        tableName = tableList[gameType]
+        max,min = self.getMaxAndMinRowNum(tableName,"pro_id")
 
 
-        sql =  "SELECT * FROM exam_list WHERE pro_id in ("
+        sql =  "SELECT * FROM %s WHERE pro_id in (" %(tableName)
 
           
         for i in range(0,num):
