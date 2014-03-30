@@ -67,6 +67,7 @@ class LoginHandler(tornado.web.RequestHandler):
 
             result = user.getUserInfoByName(userName)
             if result == 0:
+                password = user.getHashedPassword(password, user.salt)
                 if password != user.password:
                     raise Exception
                 sessionID = str(uuid4())

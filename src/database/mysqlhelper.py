@@ -12,7 +12,9 @@ import logging
 import traceback
 from uuid import uuid4
 import random
-
+import string
+import hashlib
+import uuid
 try:
   import sae
   isSae = True
@@ -37,16 +39,28 @@ class UserInfo():
         if self.db:
             self.db.close()
 
-    def setUserInfo(self, userName, password, userEmail, userNickname):
+    def setUserInfo(self, userName, password, salt, userEmail, userNickname):
         self.userName = MySQLdb.escape_string(userName)
         self.password = MySQLdb.escape_string(password)
+        self.salt     = MySQLdb.escape_string(salt)
         self.userEmail= MySQLdb.escape_string(userEmail)
         self.userNickname= MySQLdb.escape_string(userNickname)
     
+    def getHashedPassword(self,password,salt):
+      return hashlib.sha1(password + salt).hexdigest()
+
+    def my_random_string(self,string_length=10):
+      """Returns a random string of length string_length."""
+      random = str(uuid.uuid4()) # Convert uuid format to python string.
+      random = random.lower() # Make all characters uppercase.
+      random = random.replace("-","") # Remove the uuid '-'.
+      return random[0:string_length] # Return the random string.
+
+
     def saveUserInfo(self):
         sql = """INSERT INTO userinfo(userName,
-         password, userEmail, userNickname)
-         VALUES ('%s', '%s', '%s', '%s')""" % (self.userName,self.password, self.userEmail, self.userNickname)
+         password, salt, userEmail, userNickname)
+         VALUES ('%s', '%s','%s', '%s', '%s')""" % (self.userName,self.password,self.salt, self.userEmail, self.userNickname)
         logging.debug(sql)
         try:
                # Execute the SQL command
@@ -100,12 +114,11 @@ class UserInfo():
             self.userID   = row['userID']
             self.userName = row['userName']
             self.password = row['password']
+            self.salt     = row['salt']
             self.userEmail= row['userEmail']
             self.userNickname = row['userNickname']
-            # Now print fetched result
-            logging.debug("userName=%s,password=%s,userEmail=%s" % \
-            (self.userName, self.password, self.userEmail) )
             return 0
+            # Now print fetched result
         except:
             print "Error: unable to fecth data"
             logging.warning(traceback.format_exc())
@@ -135,6 +148,7 @@ class UserInfo():
             self.userID   = row['userID']
             self.userName = row['userName']
             self.password = row['password']
+            self.salt     = row['password']
             self.userEmail= row['userEmail']
             self.userNickname = row['userNickname']
             # Now print fetched result

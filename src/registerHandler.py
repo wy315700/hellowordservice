@@ -62,7 +62,10 @@ class RegisterHandler(tornado.web.RequestHandler):
 
         try:
             user = mysqlhelper.UserInfo()
-            user.setUserInfo(userName, password, userEmail, userNickname)
+            salt = user.my_random_string(10)
+
+            password = user.getHashedPassword(password,salt)
+            user.setUserInfo(userName, password, salt, userEmail, userNickname)
             userID = user.saveUserInfo()
             if userID > 0:
                 sessionID = str(uuid4())
