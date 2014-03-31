@@ -288,11 +288,19 @@ class PvpGameInfo():
 
         sql =  "SELECT * FROM %s WHERE pro_id in (" %(tableName)
 
-          
+        b_list = range(min,max)
+        
+        rand_list = random.sample(b_list,num)
+
         for i in range(0,num):
-          sql += str(random.randint(min, max) )
+          sql += str(rand_list[i])
           if i != 9:
             sql += ","
+
+        # for i in range(0,num):
+        #   sql += str(random.randint(min, max) )
+        #   if i != 9:
+        #     sql += ","
 
         sql += ")"
 
