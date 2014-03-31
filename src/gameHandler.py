@@ -17,9 +17,8 @@ import logging
 import traceback
 from uuid import uuid4
 
-import sys
-sys.path.append("./database/")
-import mysqlhelper
+
+import database.mysqlhelper as mysqlhelper
 import random
 import copy
 

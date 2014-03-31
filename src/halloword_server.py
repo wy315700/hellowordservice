@@ -18,11 +18,11 @@ from tornado.options import define, options
 define("port", default = 8000, help = "run on the given port",type = int)
 
 
-from loginHandler import LoginHandler
-from registerHandler import RegisterHandler
-from changeInfoHandler import ChangeInfoHandler
-from longpolldemo import MessageUpdatesHandler,MessageNewHandler
-from gameHandler import RequestGameHandler, RequestRankHandler,UploadResultHandler,UserLogoutHandler,RequestPKGameHandler,UploadPKResultHandler
+from LoginHandler import LoginHandler
+from RegisterHandler import RegisterHandler
+from ChangeInfoHandler import ChangeInfoHandler
+from Longpolldemo import MessageUpdatesHandler,MessageNewHandler
+from GameHandler import RequestGameHandler, RequestRankHandler,UploadResultHandler,UserLogoutHandler,RequestPKGameHandler,UploadPKResultHandler
 
 class Users(object):
 	"""Handle with the users' operation"""

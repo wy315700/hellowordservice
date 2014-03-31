@@ -17,9 +17,7 @@ import logging
 import traceback
 from uuid import uuid4
 
-import sys
-sys.path.append("./database/")
-import mysqlhelper
+import database.mysqlhelper as mysqlhelper
 
 
 class RegisterHandler(tornado.web.RequestHandler):

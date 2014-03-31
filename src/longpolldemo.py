@@ -19,9 +19,7 @@ import json
 
 from tornado import gen
 
-import sys
-sys.path.append("./database/")
-import mysqlhelper
+import database.mysqlhelper as mysqlhelper
 
 class MessageBuffer(object):
     def __init__(self):
