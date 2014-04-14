@@ -76,14 +76,14 @@ class TestSequenceFunctions(unittest.TestCase):
         values ={'params' : ' \
         {\
             "request" : "/user/change_userinfo.json",\
-            "sessionID" : "51d35ce0-188d-4099-9e2e-5ccc0110a196",\
+            "sessionID" : "fac2a6d5-d2c7-483f-a957-87f9fdf7b1a5",\
             "userInfo" : {\
                 "userName" : "123",\
                 "userNickname" : "333",\
                 "oldPassword" : "aaaaaa",\
                 "newPassword" : "aaaaaa",\
                 "userAvatarType" : "id",\
-                "userAvatar" : "2"\
+                "userAvatar" : "3"\
             }\
         }\
         '}

@@ -60,8 +60,10 @@ class UserInfo():
           self.createSalt()
 
         self.password = self.getHashedPassword(plainPassword, self.salt)
+        
     def createSalt(self):
         self.salt = self.my_random_string(10)
+
     def getHashedPassword(self,password,salt):
       return hashlib.sha1(password.encode("utf-8") + salt).hexdigest()
 

@@ -76,15 +76,15 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
             if result == 0:
                 if  user.varifyPassword(oldPassword):
                     raise Exception
-                newPassword = user.getHashedPassword(newPassword,user.salt)
-                user.setUserInfo(userName, newPassword, userEmail, userNickname)
+                user.setUserInfo(userName, userEmail, userNickname)
+                user.setUserPassword(newPassword)
                 result = user.updateUserInfo()
                 if userAvatarType != '':
                     user.setUserAvatarInfo(userAvatarType,userAvatar)
                     result = user.updateUserAvatar()
                 if result == 0:
                     #sessionID = str(uuid4())
-                    self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail)
+                    self.printSuccess(user.userID, user.userName, user.userNickname,user.userEmail, user.userAvatarType,user.userAvatar)
                     return
                 else:
                     raise Exception
@@ -94,7 +94,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20201", "change userInfo failed")
 
-    def printSuccess(self,userID,userName,userNickname, userEmail):
+    def printSuccess(self,userID,userName,userNickname, userEmail, userAvatarType, userAvatar):
         response = {
                     "request" : "/user/change_userinfo.json",
                     "result": "success", 
@@ -103,7 +103,9 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
                             "userID": userID,
                             "userName": userName,
                             "userNickname": userNickname,
-                            "userEmail": userEmail
+                            "userEmail": userEmail,
+                            "userAvatarType" : userAvatarType,
+                            "userAvatar" : userAvatar
                         }
                     }
                 }
