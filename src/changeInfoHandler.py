@@ -74,7 +74,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
 
             result = user.getUserIDBySession(userSession)
             if result == 0:
-                if  user.getHashedPassword(oldPassword,user.salt) != user.password:
+                if  user.varifyPassword(oldPassword):
                     raise Exception
                 newPassword = user.getHashedPassword(newPassword,user.salt)
                 user.setUserInfo(userName, newPassword, userEmail, userNickname)

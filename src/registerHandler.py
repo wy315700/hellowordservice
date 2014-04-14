@@ -62,17 +62,16 @@ class RegisterHandler(tornado.web.RequestHandler):
 
         try:
             user = mysqlhelper.UserInfo()
-            salt = user.my_random_string(10)
-            user.setUserSalt(salt)
-            password = user.getHashedPassword(password,salt)
-            user.setUserInfo(userName, password, userEmail, userNickname)
+            user.setUserInfo(userName, userEmail, userNickname)
+            user.setUserPassword(password)
+
             if userAvatarType != '':
                 user.setUserAvatarInfo(userAvatarType,userAvatar)
             userID = user.saveUserInfo()
             if userID > 0:
                 sessionID = str(uuid4())
                 user.createSession(sessionID,userID)
-                self.printSuccess(userID, user.userName, user.userNickname, user.userEmail, sessionID)
+                self.printSuccess(userID, user.userName, user.userNickname, user.userEmail,user.userAvatarType, user.userAvatar, sessionID)
                 return
             else:
                 raise Exception
@@ -81,7 +80,7 @@ class RegisterHandler(tornado.web.RequestHandler):
 
             logging.warning(traceback.format_exc())
 
-    def printSuccess(self,userID,userName,userNickname, userEmail, sessionID):
+    def printSuccess(self,userID,userName,userNickname, userEmail, userAvatarType, userAvatar, sessionID):
         response = {
             "request" : "/user/register.json",
             "result"  : "success",
@@ -90,7 +89,9 @@ class RegisterHandler(tornado.web.RequestHandler):
                     "userID" : userID,
                     "userName" : userName,
                     "userNickname" : userNickname,
-                    "userEmail" : userEmail
+                    "userEmail" : userEmail,
+                    "userAvatarType" : userAvatarType,
+                    "userAvatar" : userAvatar
                     },
                     "sessionID" : sessionID
                 } 
