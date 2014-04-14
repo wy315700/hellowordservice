@@ -43,15 +43,8 @@ class RegisterHandler(tornado.web.RequestHandler):
             params = json.loads(paramStr);
             if params['request'] == "/user/register.json":
                 userName = params['userInfo']['userName']
-
-
                 password = params['userInfo']['password']
-
                 userNickname = params['userInfo']['userNickname']
-
-                
-
-                
         except Exception, e:
             logging.warning(traceback.format_exc())
             self.printError('10001', 'params error!')
@@ -63,7 +56,7 @@ class RegisterHandler(tornado.web.RequestHandler):
             
         try:
             userAvatarType = params['userInfo']['userAvatarType']
-            userAvatar = params['userInfo']['userAvatar']
+            userAvatar     = params['userInfo']['userAvatar']
         except Exception, e:
             pass            
 

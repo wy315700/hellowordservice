@@ -52,8 +52,8 @@ class UserInfo():
         self.salt = salt
 
     def setUserAvatarInfo(self,avatarType,avatar):
-        self.userAvatarType = avatarType
-        self.userAvatar     = avatar
+        self.userAvatarType = MySQLdb.escape_string(avatarType)
+        self.userAvatar     = MySQLdb.escape_string(avatar)
     
     def getHashedPassword(self,password,salt):
       return hashlib.sha1(password + salt).hexdigest()
