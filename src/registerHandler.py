@@ -36,6 +36,8 @@ class RegisterHandler(tornado.web.RequestHandler):
         password = ''
         userNickname = ''
         userEmail = ''
+        userAvatarType = ''
+        userAvatar = ''
         try:
             paramStr = self.get_argument("params");
             params = json.loads(paramStr);
@@ -48,6 +50,8 @@ class RegisterHandler(tornado.web.RequestHandler):
                 userNickname = params['userInfo']['userNickname']
 
                 
+
+                
         except Exception, e:
             logging.warning(traceback.format_exc())
             self.printError('10001', 'params error!')
@@ -57,13 +61,20 @@ class RegisterHandler(tornado.web.RequestHandler):
         except Exception, e:
             userEmail = userName
             
+        try:
+            userAvatarType = params['userInfo']['userAvatarType']
+            userAvatar = params['userInfo']['userAvatar']
+        except Exception, e:
+            pass            
 
         try:
             user = mysqlhelper.UserInfo()
             salt = user.my_random_string(10)
-
+            user.setUserSalt(salt)
             password = user.getHashedPassword(password,salt)
-            user.setUserInfo(userName, password, salt, userEmail, userNickname)
+            user.setUserInfo(userName, password, userEmail, userNickname)
+            if userAvatarType != '':
+                user.setUserAvatarInfo(userAvatarType,userAvatar)
             userID = user.saveUserInfo()
             if userID > 0:
                 sessionID = str(uuid4())

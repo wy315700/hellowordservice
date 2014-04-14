@@ -32,19 +32,28 @@ class UserInfo():
         self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
         self.userName = ''
         self.password = ''
+        self.salt     = ''
         self.userEmail= ''
+        self.userAvatarType = 'id'
+        self.userAvatar     = '1'
     def __del__(self):
         if self.cursor:
             self.cursor.close()
         if self.db:
             self.db.close()
 
-    def setUserInfo(self, userName, password, salt, userEmail, userNickname):
+    def setUserInfo(self, userName, password, userEmail, userNickname):
         self.userName = MySQLdb.escape_string(userName)
         self.password = MySQLdb.escape_string(password)
-        self.salt     = MySQLdb.escape_string(salt)
         self.userEmail= MySQLdb.escape_string(userEmail)
         self.userNickname= MySQLdb.escape_string(userNickname)
+
+    def setUserSalt(self,salt):
+        self.salt = salt
+
+    def setUserAvatarInfo(self,avatarType,avatar):
+        self.userAvatarType = avatarType
+        self.userAvatar     = avatar
     
     def getHashedPassword(self,password,salt):
       return hashlib.sha1(password + salt).hexdigest()
@@ -59,8 +68,8 @@ class UserInfo():
 
     def saveUserInfo(self):
         sql = """INSERT INTO userinfo(userName,
-         password, salt, userEmail, userNickname)
-         VALUES ('%s', '%s','%s', '%s', '%s')""" % (self.userName,self.password,self.salt, self.userEmail, self.userNickname)
+         password, salt, userEmail, userNickname, userAvatarType, userAvatar)
+         VALUES ('%s', '%s','%s', '%s', '%s', '%s', '%s')""" % (self.userName,self.password,self.salt, self.userEmail, self.userNickname, self.userAvatarType, self.userAvatar)
         logging.debug(sql)
         try:
                # Execute the SQL command
@@ -73,6 +82,26 @@ class UserInfo():
                # Rollback in case there is any error
                self.db.rollback()
                return -1
+
+    def updateUserAvatar(self):
+        sql = """update userinfo set 
+         userAvatarType = '%s', userAvatar = '%s'
+         where userName = '%s' """ % ( self.userAvatarType, self.userAvatar, self.userName)
+        logging.debug(sql)
+        try:
+            # Execute the SQL command
+            self.cursor.execute(sql)
+            # Commit your changes in the database
+            num = self.db.affected_rows()
+            if num != 1:
+                raise Exception
+            self.db.commit()
+            return 0
+        except:
+            # Rollback in case there is any error
+            logging.warning(traceback.format_exc())
+            self.db.rollback()
+            return -1
 
     def updateUserInfo(self):
         sql = """update userinfo set 
@@ -117,6 +146,8 @@ class UserInfo():
             self.salt     = row['salt']
             self.userEmail= row['userEmail']
             self.userNickname = row['userNickname']
+            self.userAvatarType = row['userAvatarType']
+            self.userAvatar     = row['userAvatar']
             return 0
             # Now print fetched result
         except:
@@ -145,12 +176,15 @@ class UserInfo():
                 raise Exception
 
             row = results[0]
+            print row
             self.userID   = row['userID']
             self.userName = row['userName']
             self.password = row['password']
-            self.salt     = row['password']
+            self.salt     = row['salt']
             self.userEmail= row['userEmail']
             self.userNickname = row['userNickname']
+            self.userAvatarType = row['userAvatarType']
+            self.userAvatar     = row['userAvatar']
             # Now print fetched result
             logging.debug("userName=%s,password=%s,userEmail=%s" % \
             (self.userName, self.password, self.userEmail) )

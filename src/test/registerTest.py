@@ -75,7 +75,9 @@ class TestSequenceFunctions(unittest.TestCase):
             "userInfo" : {\
                 "userName" : "123",\
                 "password" : "aaaaaa",\
-                "userNickname" : "asas"\
+                "userNickname" : "asas",\
+                "userAvatarType" : "id",\
+                "userAvatar" : "1"\
             }\
         }\
         '}

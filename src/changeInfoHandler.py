@@ -45,6 +45,9 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
         userEmail    = ''
 
         userSession  = ''
+
+        userAvatarType = ''
+        userAvatar = ''
         try:
             paramStr = self.get_argument("params")
 
@@ -60,16 +63,25 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
             self.printError("10001", "params error")
             return
         
+        try:
+            userAvatarType = params['userInfo']['userAvatarType']
+            userAvatar = params['userInfo']['userAvatar']
+        except Exception, e:
+            pass
         #=======================================
         try:
             user = mysqlhelper.UserInfo()
 
             result = user.getUserIDBySession(userSession)
             if result == 0:
-                if oldPassword != user.password:
+                if  user.getHashedPassword(oldPassword,user.salt) != user.password:
                     raise Exception
+                newPassword = user.getHashedPassword(newPassword,user.salt)
                 user.setUserInfo(userName, newPassword, userEmail, userNickname)
                 result = user.updateUserInfo()
+                if userAvatarType != '':
+                    user.setUserAvatarInfo(userAvatarType,userAvatar)
+                    result = user.updateUserAvatar()
                 if result == 0:
                     #sessionID = str(uuid4())
                     self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail)
