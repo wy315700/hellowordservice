@@ -15,6 +15,7 @@ import random
 import string
 import hashlib
 import uuid
+import os
 try:
   import sae
   isSae = True
@@ -42,9 +43,8 @@ class UserInfo():
         if self.db:
             self.db.close()
 
-    def setUserInfo(self, userName, password, userEmail, userNickname):
+    def setUserInfo(self, userName, userEmail, userNickname):
         self.userName = MySQLdb.escape_string(userName)
-        self.password = MySQLdb.escape_string(password)
         self.userEmail= MySQLdb.escape_string(userEmail)
         self.userNickname= MySQLdb.escape_string(userNickname)
 
@@ -55,8 +55,20 @@ class UserInfo():
         self.userAvatarType = MySQLdb.escape_string(avatarType)
         self.userAvatar     = MySQLdb.escape_string(avatar)
     
+    def setUserPassword(self, plainPassword):
+        if self.salt == '':
+          self.createSalt()
+
+        self.password = self.getHashedPassword(plainPassword, self.salt)
+        
+    def createSalt(self):
+        self.salt = self.my_random_string(10)
+
     def getHashedPassword(self,password,salt):
-      return hashlib.sha1(password + salt).hexdigest()
+      return hashlib.sha1(password.encode("utf-8") + salt).hexdigest()
+
+    def varifyPassword(self, plainPassword):
+        return self.getHashedPassword(plainPassword,self.salt) != self.password
 
     def my_random_string(self,string_length=10):
       """Returns a random string of length string_length."""
@@ -64,7 +76,8 @@ class UserInfo():
       random = random.lower() # Make all characters uppercase.
       random = random.replace("-","") # Remove the uuid '-'.
       return random[0:string_length] # Return the random string.
-
+      # """using cryptographic safety random functions"""
+      # return os.urandom(string_length)
 
     def saveUserInfo(self):
         sql = """INSERT INTO userinfo(userName,
@@ -80,6 +93,7 @@ class UserInfo():
                return userID
         except:
                # Rollback in case there is any error
+               logging.warning(traceback.format_exc())
                self.db.rollback()
                return -1
 

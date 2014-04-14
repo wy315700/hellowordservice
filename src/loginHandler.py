@@ -52,8 +52,6 @@ class LoginHandler(tornado.web.RequestHandler):
             params = json.loads(paramStr);
             if params['request'] == "/user/login.json":
                 userName = params['loginInfo']['userName']
-
-
                 password = params['loginInfo']['password']
         except Exception, e:
             logging.warning(traceback.format_exc())
@@ -66,13 +64,12 @@ class LoginHandler(tornado.web.RequestHandler):
 
             result = user.getUserInfoByName(userName)
             if result == 0:
-                password = user.getHashedPassword(password, user.salt)
-                if password != user.password:
+                if user.varifyPassword(password):
                     raise Exception
                 sessionID = str(uuid4())
                 user.deleteSessionByUserID(user.userID)
                 user.createSession(sessionID,user.userID)
-                self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail, sessionID)
+                self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail,user.userAvatarType,user.userAvatar, sessionID)
                 return
             else:
                 raise Exception
@@ -80,7 +77,7 @@ class LoginHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20101", "login failed")
 
-    def printSuccess(self,userID,userName,userNickname, userEmail, sessionID):
+    def printSuccess(self,userID,userName,userNickname, userEmail,userAvatarType, userAvatar, sessionID):
         response = {
                     "request" : "/user/login.json",
                     "result": "success", 
@@ -89,7 +86,9 @@ class LoginHandler(tornado.web.RequestHandler):
                             "userID": userID,
                             "userName": userName,
                             "userNickname": userNickname,
-                            "userEmail": userEmail
+                            "userEmail": userEmail,
+                            "userAvatarType" : userAvatarType,
+                            "userAvatar" : userAvatar
                         },
                         "sessionID": sessionID
                     }
