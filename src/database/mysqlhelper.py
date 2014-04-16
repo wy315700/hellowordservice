@@ -12,6 +12,8 @@ import sqlalchemy
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy.types import CHAR, Integer, String, VARCHAR, TIMESTAMP
+from sqlalchemy.dialects.mysql import TINYINT
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func, or_, not_
@@ -33,7 +35,7 @@ except Exception, e:
   isSae = False
 
 ##sqlalchemy 基本变量
-global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword')
+global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8')
 BaseModel = declarative_base()
 DB_Session = sessionmaker(bind=global_engine)
 global_session = DB_Session()
@@ -57,8 +59,138 @@ class UserSessionModel(BaseModel):
     userID = Column(Integer)
     createTime = Column(TIMESTAMP,server_default = sqlalchemy.sql.expression.text('CURRENT_TIMESTAMP()'))
 
+# class BaseExamModel(BaseModel):
+#   __tablename__ = 'exam_list'
+#   pro_id = Column(Integer, primary_key=True, autoincrement=True)
+#   pro_description = Column(VARCHAR(50))
+#   pro_ans_a = Column(VARCHAR(10))
+#   pro_ans_b = Column(VARCHAR(10))
+#   pro_ans_c = Column(VARCHAR(10))
+#   pro_ans_d = Column(VARCHAR(10))
+#   pro_point = Column(TINYINT(4))
+#   pro_time = Column(TINYINT(4))
+#   pro_type = Column(TINYINT(4))
 
+class Cet4en2zhExamModel(BaseModel):
+  __tablename__ = 'exam_cet4_en2zh'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
 
+class Cet4zh2enExamModel(BaseModel):
+  __tablename__ = 'exam_cet4_zh2en'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Cet6eh2zhExamModel(BaseModel):
+  __tablename__ = 'exam_cet6_en2zh'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Cet6zh2enExamModel(BaseModel):
+  __tablename__ = 'exam_cet6_zh2en'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Green2zhExamModel(BaseModel):
+  __tablename__ = 'exam_gre_en2zh'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Grezh2enExamModel(BaseModel):
+  __tablename__ = 'exam_gre_zh2en'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Ieltsen2zhExamModel(BaseModel):
+  __tablename__ = 'exam_ielts_en2zh'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Ieltszh2enExamModel(BaseModel):
+  __tablename__ = 'exam_ielts_zh2en'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Toeflen2zhExamModel(BaseModel):
+  __tablename__ = 'exam_toefl_en2zh'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+
+class Toeflzh2enExamModel(BaseModel):
+  __tablename__ = 'exam_toefl_zh2en'
+  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_description = Column(VARCHAR(50))
+  pro_ans_a = Column(VARCHAR(10))
+  pro_ans_b = Column(VARCHAR(10))
+  pro_ans_c = Column(VARCHAR(10))
+  pro_ans_d = Column(VARCHAR(10))
+  pro_point = Column(TINYINT(4))
+  pro_time = Column(TINYINT(4))
+  pro_type = Column(TINYINT(4))
+    
 class UserInfo():
     def __init__(self):
         """connection for the database"""
@@ -255,7 +387,7 @@ class UserInfo():
     
 
 class PvpGameInfo():
-    def __init__(self, userInfo = None):
+    def __init__(self, user = None):
         """connection for the database"""
         if isSae:
           self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307,charset='utf8')
@@ -263,7 +395,9 @@ class PvpGameInfo():
           self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword",charset='utf8')
         self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
         self.cursor.execute("set names utf8")
-        self.user = userInfo
+        self._user = user
+        self._session = DB_Session()
+
 
     def __del__(self):
         if self.cursor:
@@ -271,13 +405,13 @@ class PvpGameInfo():
         if self.db:
             self.db.close()
 
+
     def getMaxAndMinRowNum(self,tableName, rowName):
       sql = "SELECT max(%s) as max , min(%s) as min FROM %s" %(rowName,rowName, tableName)
-      self.cursor.execute(sql)
-      # Fetch all the rows in a list of lists.
-      results = self.cursor.fetchall()
-      result = results[0]
-      return result['max'],result['min']
+      try:
+        return self._session.execute(sql).first()
+      except Exception, e:
+        logging.warning(traceback.format_exc())
 
     def getGame(self, gameType, num):
         if not gameType:
@@ -285,7 +419,7 @@ class PvpGameInfo():
             return -1
         if isinstance(gameType, long):
           gameType = str(gameType)
-        gameType = MySQLdb.escape_string(gameType)
+
         tableList = {
           "1" : "exam_cet4_en2zh",
           "2" : "exam_cet4_zh2en",
@@ -298,38 +432,44 @@ class PvpGameInfo():
           "9" : "exam_gre_en2zh",
           "10" : "exam_gre_zh2en",
         }
+
+        modelList = {
+          "1" : Cet4en2zhExamModel,
+          "2" : Cet4zh2enExamModel,
+          "3" : Cet6eh2zhExamModel,
+          "4" : Cet6zh2enExamModel,
+          "5" : Toeflen2zhExamModel,
+          "6" : Toeflzh2enExamModel,
+          "7" : Ieltsen2zhExamModel,
+          "8" : Ieltszh2enExamModel,
+          "9" : Green2zhExamModel,
+          "10" : Grezh2enExamModel,
+        }
         if gameType not in ["1","2","3","4","5","6","7","8","9","10"]:
           return -1
 
         tableName = tableList[gameType]
+
+        modelClass = modelList[gameType]
+
         max,min = self.getMaxAndMinRowNum(tableName,"pro_id")
-
-
-        sql =  "SELECT * FROM %s WHERE pro_id in (" %(tableName)
 
         b_list = range(min,max)
         
         rand_list = random.sample(b_list,num)
 
-        for i in range(0,num):
-          sql += str(rand_list[i])
-          if i != 9:
-            sql += ","
-
-        # for i in range(0,num):
-        #   sql += str(random.randint(min, max) )
-        #   if i != 9:
-        #     sql += ","
-
-        sql += ")"
-
-        logging.info(sql)
         try:
             # Execute the SQL command
-            self.cursor.execute(sql)
+            query = self._session.query(modelClass).filter(modelClass.pro_id.in_(rand_list))
             # Fetch all the rows in a list of lists.
-            results = self.cursor.fetchall()
-            self.saveGameListToCache(self.user.userID, gameType, rand_list)
+            l = query.all()
+            results = []
+
+            row2dict = lambda r: {c.name: getattr(r, c.name) for c in r.__table__.columns}
+
+            for row in l:
+              results.append(row2dict(row))
+            # self.saveGameListToCache(self.user.userID, gameType, rand_list)
             return results
         except:
             print "Error: unable to fecth data"
@@ -364,8 +504,10 @@ class PvpGameInfo():
         
 if __name__ == "__main__":
   # BaseModel.metadata.create_all(global_engine)
-  user = UserModel(userName="12a'2",password='111',salt='12')
-  global_session.add(user)
-  user.userName = '11'
-  global_session.commit()
+  # user = UserModel(userName="12a'2",password='111',salt='12')
+  # global_session.add(user)
+  # user.userName = '11'
+  # global_session.commit()
+  sql = "SELECT max(`pro_id`) as max , min(`pro_id`) as min FROM `exam_cet4_en2zh`"
+  print global_session.execute(sql).first()
   pass
