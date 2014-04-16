@@ -285,7 +285,7 @@ class UserInfo():
     
 
 class PvpGameInfo():
-    def __init__(self):
+    def __init__(self, userInfo = None):
         """connection for the database"""
         if isSae:
           self.db = MySQLdb.connect(sae.const.MYSQL_HOST,sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_DB,3307,charset='utf8')
@@ -293,6 +293,7 @@ class PvpGameInfo():
           self.db = MySQLdb.connect("localhost","root","asdfghjkl","helloword",charset='utf8')
         self.cursor = self.db.cursor(MySQLdb.cursors.DictCursor)
         self.cursor.execute("set names utf8")
+        self.user = userInfo
 
     def __del__(self):
         if self.cursor:
@@ -358,7 +359,7 @@ class PvpGameInfo():
             self.cursor.execute(sql)
             # Fetch all the rows in a list of lists.
             results = self.cursor.fetchall()
-
+            self.saveGameListToCache(self.user.userID, gameType, rand_list)
             return results
         except:
             print "Error: unable to fecth data"
@@ -366,7 +367,28 @@ class PvpGameInfo():
             # Rollback in case there is any error
             self.db.rollback()
             return -1
-    
+
+    def saveGameListToCache(self,userID,gameType,gameList):
+      if not userID or not gameList:
+        return -1
+      if not isinstance(gameList,list):
+        return -1
+      if len(gameList) == 0:
+        return -1;
+      
+      sql = "INSERT INTO `user_pk_game_cache` (`userID`,`userGameType`,`userGameIDs`) VALUES (%d,'%s','%s')" %(userID,gameType,repr(gameList) )
+
+      try:
+        # Execute the SQL command
+        self.cursor.execute(sql)
+        # Fetch all the rows in a list of lists.
+        return 0
+      except:
+        print "Error: unable to fecth data"
+        logging.warning(traceback.format_exc())
+        # Rollback in case there is any error
+        self.db.rollback()
+        return -1
 
 
         

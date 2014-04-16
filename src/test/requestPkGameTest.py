@@ -21,7 +21,7 @@ class TestSequenceFunctions(unittest.TestCase):
         values ={'params' : ' \
         {\
         "request" : "/helloword/request_pk_game.json",\
-        "sessionID"  : "aaa",\
+        "sessionID"  : "fac2a6d5-d2c7-483f-a957-87f9fdf7b1a5",\
         "gameType" : "4" \
         }\
         '}
