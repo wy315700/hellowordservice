@@ -124,22 +124,6 @@ class UserInfo():
       # return os.urandom(string_length)
 
     def saveUserInfo(self):
-        # sql = """INSERT INTO userinfo(userName,
-        #  password, salt, userEmail, userNickname, userAvatarType, userAvatar)
-        #  VALUES ('%s', '%s','%s', '%s', '%s', '%s', '%s')""" % (self.userName,self.password,self.salt, self.userEmail, self.userNickname, self.userAvatarType, self.userAvatar)
-        # logging.debug(sql)
-        # try:
-        #        # Execute the SQL command
-        #        self.cursor.execute(sql)
-        #        # Commit your changes in the database
-        #        userID = self.db.insert_id()
-        #        self.db.commit()
-        #        return userID
-        # except:
-        #        # Rollback in case there is any error
-        #        logging.warning(traceback.format_exc())
-        #        self.db.rollback()
-        #        return -1
       """using orm"""
       try:
         self._session.add(self._user)
@@ -151,24 +135,6 @@ class UserInfo():
         return -1
 
     def updateUserAvatar(self):
-        # sql = """update userinfo set 
-        #  userAvatarType = '%s', userAvatar = '%s'
-        #  where userName = '%s' """ % ( self.userAvatarType, self.userAvatar, self.userName)
-        # logging.debug(sql)
-        # try:
-        #     # Execute the SQL command
-        #     self.cursor.execute(sql)
-        #     # Commit your changes in the database
-        #     num = self.db.affected_rows()
-        #     if num != 1:
-        #         raise Exception
-        #     self.db.commit()
-        #     return 0
-        # except:
-        #     # Rollback in case there is any error
-        #     logging.warning(traceback.format_exc())
-        #     self.db.rollback()
-        #     return -1
       """using orm"""
       try:
         query = self._session.query(UserModel).filter(UserModel.userName == self._user.userName)
@@ -183,24 +149,6 @@ class UserInfo():
         return -1
 
     def updateUserInfo(self):
-        # sql = """update userinfo set 
-        #  password = '%s', userNickname = '%s'
-        #  where userName = '%s' """ % (self.password, self.userNickname, self.userName)
-        # logging.debug(sql)
-        # try:
-        #     # Execute the SQL command
-        #     self.cursor.execute(sql)
-        #     # Commit your changes in the database
-        #     num = self.db.affected_rows()
-        #     if num != 1:
-        #         raise Exception
-        #     self.db.commit()
-        #     return 0
-        # except:
-        #     # Rollback in case there is any error
-        #     logging.warning(traceback.format_exc())
-        #     self.db.rollback()
-        #     return -1
       """using orm"""
       try:
         query = self._session.query(UserModel).filter(UserModel.userName == self._user.userName)
@@ -215,38 +163,6 @@ class UserInfo():
         return -1
 
     def getUserInfoByName(self, userName):
-        # if not userName:
-        #     """an error handle"""
-        #     return -1
-        # userName = MySQLdb.escape_string(userName)
-       	# sql =  "SELECT * FROM userinfo \
-        #         WHERE userName = '%s'" % (userName)
-        # logging.debug(sql)
-        # try:
-        #     # Execute the SQL command
-        #     self.cursor.execute(sql)
-        #     # Fetch all the rows in a list of lists.
-        #     results = self.cursor.fetchall()
-        #     if len(results) != 1:
-        #         raise Exception
-
-        #     row = results[0]
-        #     self.userID   = row['userID']
-        #     self.userName = row['userName']
-        #     self.password = row['password']
-        #     self.salt     = row['salt']
-        #     self.userEmail= row['userEmail']
-        #     self.userNickname = row['userNickname']
-        #     self.userAvatarType = row['userAvatarType']
-        #     self.userAvatar     = row['userAvatar']
-        #     return 0
-        #     # Now print fetched result
-        # except:
-        #     print "Error: unable to fecth data"
-        #     logging.warning(traceback.format_exc())
-        #     # Rollback in case there is any error
-        #     self.db.rollback()
-        #     return -1
       """using orm"""
       try:
         query = self._session.query(UserModel).filter(UserModel.userName == userName)
@@ -263,43 +179,6 @@ class UserInfo():
 
 
     def getUserInfoByID(self, userID):
-        # if not userID:
-        #     """an error handle"""
-        #     return -1
-        # if isinstance(userID, long):
-        #   userID = str(userID)
-        # userID = MySQLdb.escape_string(userID)
-        # sql =  "SELECT * FROM userinfo \
-        #         WHERE userID = '%s'" % (userID)
-        # logging.debug(sql)
-        # try:
-        #     # Execute the SQL command
-        #     self.cursor.execute(sql)
-        #     # Fetch all the rows in a list of lists.
-        #     results = self.cursor.fetchall()
-        #     if len(results) != 1:
-        #         raise Exception
-
-        #     row = results[0]
-        #     print row
-        #     self.userID   = row['userID']
-        #     self.userName = row['userName']
-        #     self.password = row['password']
-        #     self.salt     = row['salt']
-        #     self.userEmail= row['userEmail']
-        #     self.userNickname = row['userNickname']
-        #     self.userAvatarType = row['userAvatarType']
-        #     self.userAvatar     = row['userAvatar']
-        #     # Now print fetched result
-        #     logging.debug("userName=%s,password=%s,userEmail=%s" % \
-        #     (self.userName, self.password, self.userEmail) )
-        #     return 0
-        # except:
-        #     print "Error: unable to fecth data"
-        #     logging.warning(traceback.format_exc())
-        #     # Rollback in case there is any error
-        #     self.db.rollback()
-        #     return -1
       """using orm"""
       try:
         query = self._session.query(UserModel).filter(UserModel.userID == userID)
@@ -326,30 +205,6 @@ class UserInfo():
 
 
     def getUserIDBySession(self, sessionID):
-        # sessionID = MySQLdb.escape_string(sessionID)
-
-        # sql =  "SELECT * FROM sessions \
-        #         WHERE sessionID = '%s'" % (sessionID)
-        # logging.debug(sql)
-        # try:
-        #     # Execute the SQL command
-        #     self.cursor.execute(sql)
-        #     # Fetch all the rows in a list of lists.
-        #     results = self.cursor.fetchall()
-        #     if len(results) == 0 :
-        #         raise Exception
-
-        #     row = results[0]
-        #     self.userID   = row['userID']
-        #     self.getUserInfoByID(self.userID)
-        #     # Now print fetched result
-        #     return 0
-        # except:
-        #     print "Error: unable to fecth data"
-        #     logging.warning(traceback.format_exc())
-        #     # Rollback in case there is any error
-        #     self.db.rollback()
-        #     return -1
       """using orm"""
       try:
         query = self._session.query(UserSessionModel).filter(UserSessionModel.sessionID == sessionID)
@@ -366,20 +221,6 @@ class UserInfo():
         return -1
 
     def deleteSessionByUserID(self, userID):
-        # sql = "DELETE FROM sessions WHERE userID='%s'" % (userID)
-
-        # logging.debug(sql)
-        # try:
-        #        # Execute the SQL command
-        #        self.cursor.execute(sql)
-        #        # Commit your changes in the database
-        #        self.db.commit()
-        #        return 0
-        # except:
-        #        # Rollback in case there is any error
-        #        logging.warning(traceback.format_exc())
-        #        self.db.rollback()
-        #        return -1
       """using orm"""
       try:
         query = self._session.query(UserSessionModel).filter(UserSessionModel.userID == userID)
@@ -389,20 +230,6 @@ class UserInfo():
         logging.warning(traceback.format_exc())
         return -1
     def deleteSessionBySessionID(self, sessionID):
-        # sql = "DELETE FROM sessions WHERE sessionID='%s'" % (sessionID)
-
-        # logging.debug(sql)
-        # try:
-        #        # Execute the SQL command
-        #        self.cursor.execute(sql)
-        #        # Commit your changes in the database
-        #        self.db.commit()
-        #        return 0
-        # except:
-        #        # Rollback in case there is any error
-        #        logging.warning(traceback.format_exc())
-        #        self.db.rollback()
-        #        return -1
       """using orm"""
       try:
         query = self._session.query(UserSessionModel).filter(UserSessionModel.sessionID == sessionID)
@@ -413,20 +240,6 @@ class UserInfo():
         return -1
 
     def createSession(self, sessionID, userID):
-        # sql = """INSERT INTO sessions(sessionID,
-        #  userID) VALUES ('%s', '%s')""" % (sessionID,userID)
-        # logging.debug(sql)
-        # try:
-        #        # Execute the SQL command
-        #        self.cursor.execute(sql)
-        #        # Commit your changes in the database
-        #        self.db.commit()
-        #        return 0
-        # except:
-        #        # Rollback in case there is any error
-        #        logging.warning(traceback.format_exc())
-        #        self.db.rollback()
-        #        return -1
       """using orm"""
       if sessionID == '' or sessionID is None or userID is None or userID == 0:
         return -1
