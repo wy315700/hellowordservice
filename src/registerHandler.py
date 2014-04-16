@@ -71,7 +71,7 @@ class RegisterHandler(tornado.web.RequestHandler):
             if userID > 0:
                 sessionID = str(uuid4())
                 user.createSession(sessionID,userID)
-                self.printSuccess(userID, user.userName, user.userNickname, user.userEmail,user.userAvatarType, user.userAvatar, sessionID)
+                self.printSuccess(userID, user._user.userName, user._user.userNickname, user._user.userEmail,user._user.userAvatarType, user._user.userAvatar, sessionID)
                 return
             else:
                 raise Exception
