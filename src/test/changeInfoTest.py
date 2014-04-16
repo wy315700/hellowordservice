@@ -76,7 +76,7 @@ class TestSequenceFunctions(unittest.TestCase):
         values ={'params' : ' \
         {\
             "request" : "/user/change_userinfo.json",\
-            "sessionID" : "fac2a6d5-d2c7-483f-a957-87f9fdf7b1a5",\
+            "sessionID" : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc",\
             "userInfo" : {\
                 "userName" : "123",\
                 "userNickname" : "333",\

@@ -64,12 +64,12 @@ class LoginHandler(tornado.web.RequestHandler):
 
             result = user.getUserInfoByName(userName)
             if result == 0:
-                if user.varifyPassword(password):
+                if not user.varifyPassword(password):
                     raise Exception
                 sessionID = str(uuid4())
-                user.deleteSessionByUserID(user.userID)
-                user.createSession(sessionID,user.userID)
-                self.printSuccess(user.userID, user.userName, user.userNickname, user.userEmail,user.userAvatarType,user.userAvatar, sessionID)
+                user.deleteSessionByUserID(user._user.userID)
+                user.createSession(sessionID,user._user.userID)
+                self.printSuccess(user._user.userID, user._user.userName, user._user.userNickname, user._user.userEmail,user._user.userAvatarType,user._user.userAvatar, sessionID)
                 return
             else:
                 raise Exception

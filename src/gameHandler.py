@@ -336,8 +336,7 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
 
             params = json.loads(paramStr);
             if params['request'] == "/helloword/request_pk_game.json":
-                # sessionID = params['sessionID']
-
+                sessionID = params['sessionID']
 
                 gameType = params['gameType']
 
@@ -349,13 +348,10 @@ class RequestPKGameHandler(tornado.web.RequestHandler):
         #=======================================
         try:
             user = mysqlhelper.UserInfo()
-
-            # result = user.getUserIDBySession(sessionID)
-            result = 0
+            result = user.getUserInfoBySessionID(sessionID)
             if result == 0:
                 ## 产生题目
-
-                pvpGameHander = mysqlhelper.PvpGameInfo()
+                pvpGameHander = mysqlhelper.PvpGameInfo(user._user)
 
                 ans = pvpGameHander.getGame(gameType,10)
                 if ans != -1:

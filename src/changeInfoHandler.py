@@ -42,7 +42,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
         userNickname = ''
         oldPassword  = ''
         newPassword  = ''
-        userEmail    = ''
+        userEmail    = None
 
         userSession  = ''
 
@@ -72,9 +72,9 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
         try:
             user = mysqlhelper.UserInfo()
 
-            result = user.getUserIDBySession(userSession)
+            result = user.getUserInfoBySessionID(userSession)
             if result == 0:
-                if  user.varifyPassword(oldPassword):
+                if  not user.varifyPassword(oldPassword):
                     raise Exception
                 user.setUserInfo(userName, userEmail, userNickname)
                 user.setUserPassword(newPassword)
@@ -84,7 +84,7 @@ class ChangeInfoHandler(tornado.web.RequestHandler):
                     result = user.updateUserAvatar()
                 if result == 0:
                     #sessionID = str(uuid4())
-                    self.printSuccess(user.userID, user.userName, user.userNickname,user.userEmail, user.userAvatarType,user.userAvatar)
+                    self.printSuccess(user._user.userID, user._user.userName, user._user.userNickname,user._user.userEmail, user._user.userAvatarType,user._user.userAvatar)
                     return
                 else:
                     raise Exception
