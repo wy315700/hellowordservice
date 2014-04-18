@@ -71,8 +71,8 @@ class UserSessionModel(BaseModel):
 #   pro_time = Column(TINYINT(4))
 #   pro_type = Column(TINYINT(4))
 
-class Cet4en2zhExamModel(BaseModel):
-  __tablename__ = 'exam_cet4_en2zh'
+class Cet4ExamModel(BaseModel):
+  __tablename__ = 'exam_cet4'
   pro_id = Column(Integer, primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
@@ -83,8 +83,8 @@ class Cet4en2zhExamModel(BaseModel):
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
 
-class Cet4zh2enExamModel(BaseModel):
-  __tablename__ = 'exam_cet4_zh2en'
+class Cet6ExamModel(BaseModel):
+  __tablename__ = 'exam_cet6'
   pro_id = Column(Integer, primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
@@ -95,8 +95,8 @@ class Cet4zh2enExamModel(BaseModel):
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
 
-class Cet6eh2zhExamModel(BaseModel):
-  __tablename__ = 'exam_cet6_en2zh'
+class GreExamModel(BaseModel):
+  __tablename__ = 'exam_gre'
   pro_id = Column(Integer, primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
@@ -107,8 +107,8 @@ class Cet6eh2zhExamModel(BaseModel):
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
 
-class Cet6zh2enExamModel(BaseModel):
-  __tablename__ = 'exam_cet6_zh2en'
+class IeltsExamModel(BaseModel):
+  __tablename__ = 'exam_ielts'
   pro_id = Column(Integer, primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
@@ -119,8 +119,8 @@ class Cet6zh2enExamModel(BaseModel):
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
 
-class Green2zhExamModel(BaseModel):
-  __tablename__ = 'exam_gre_en2zh'
+class ToeflExamModel(BaseModel):
+  __tablename__ = 'exam_toefl'
   pro_id = Column(Integer, primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
@@ -131,66 +131,6 @@ class Green2zhExamModel(BaseModel):
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
 
-class Grezh2enExamModel(BaseModel):
-  __tablename__ = 'exam_gre_zh2en'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
-  pro_description = Column(VARCHAR(50))
-  pro_ans_a = Column(VARCHAR(10))
-  pro_ans_b = Column(VARCHAR(10))
-  pro_ans_c = Column(VARCHAR(10))
-  pro_ans_d = Column(VARCHAR(10))
-  pro_point = Column(TINYINT(4))
-  pro_time = Column(TINYINT(4))
-  pro_type = Column(TINYINT(4))
-
-class Ieltsen2zhExamModel(BaseModel):
-  __tablename__ = 'exam_ielts_en2zh'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
-  pro_description = Column(VARCHAR(50))
-  pro_ans_a = Column(VARCHAR(10))
-  pro_ans_b = Column(VARCHAR(10))
-  pro_ans_c = Column(VARCHAR(10))
-  pro_ans_d = Column(VARCHAR(10))
-  pro_point = Column(TINYINT(4))
-  pro_time = Column(TINYINT(4))
-  pro_type = Column(TINYINT(4))
-
-class Ieltszh2enExamModel(BaseModel):
-  __tablename__ = 'exam_ielts_zh2en'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
-  pro_description = Column(VARCHAR(50))
-  pro_ans_a = Column(VARCHAR(10))
-  pro_ans_b = Column(VARCHAR(10))
-  pro_ans_c = Column(VARCHAR(10))
-  pro_ans_d = Column(VARCHAR(10))
-  pro_point = Column(TINYINT(4))
-  pro_time = Column(TINYINT(4))
-  pro_type = Column(TINYINT(4))
-
-class Toeflen2zhExamModel(BaseModel):
-  __tablename__ = 'exam_toefl_en2zh'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
-  pro_description = Column(VARCHAR(50))
-  pro_ans_a = Column(VARCHAR(10))
-  pro_ans_b = Column(VARCHAR(10))
-  pro_ans_c = Column(VARCHAR(10))
-  pro_ans_d = Column(VARCHAR(10))
-  pro_point = Column(TINYINT(4))
-  pro_time = Column(TINYINT(4))
-  pro_type = Column(TINYINT(4))
-
-class Toeflzh2enExamModel(BaseModel):
-  __tablename__ = 'exam_toefl_zh2en'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
-  pro_description = Column(VARCHAR(50))
-  pro_ans_a = Column(VARCHAR(10))
-  pro_ans_b = Column(VARCHAR(10))
-  pro_ans_c = Column(VARCHAR(10))
-  pro_ans_d = Column(VARCHAR(10))
-  pro_point = Column(TINYINT(4))
-  pro_time = Column(TINYINT(4))
-  pro_type = Column(TINYINT(4))
-    
 class UserInfo():
     def __init__(self):
         """connection for the database"""
@@ -421,29 +361,19 @@ class PvpGameInfo():
           gameType = str(gameType)
 
         tableList = {
-          "1" : "exam_cet4_en2zh",
-          "2" : "exam_cet4_zh2en",
-          "3" : "exam_cet6_en2zh",
-          "4" : "exam_cet6_zh2en",
-          "5" : "exam_toefl_en2zh",
-          "6" : "exam_toefl_zh2en",
-          "7" : "exam_ielts_en2zh",
-          "8" : "exam_ielts_zh2en",
-          "9" : "exam_gre_en2zh",
-          "10" : "exam_gre_zh2en",
+          "1" : "exam_cet4",
+          "3" : "exam_cet6",
+          "5" : "exam_toefl",
+          "7" : "exam_ielts",
+          "9" : "exam_gre",
         }
 
         modelList = {
-          "1" : Cet4en2zhExamModel,
-          "2" : Cet4zh2enExamModel,
-          "3" : Cet6eh2zhExamModel,
-          "4" : Cet6zh2enExamModel,
-          "5" : Toeflen2zhExamModel,
-          "6" : Toeflzh2enExamModel,
-          "7" : Ieltsen2zhExamModel,
-          "8" : Ieltszh2enExamModel,
-          "9" : Green2zhExamModel,
-          "10" : Grezh2enExamModel,
+          "1" : Cet4ExamModel,
+          "3" : Cet6ExamModel,
+          "5" : ToeflExamModel,
+          "7" : IeltsExamModel,
+          "9" : GreExamModel,
         }
         if gameType not in ["1","2","3","4","5","6","7","8","9","10"]:
           return -1

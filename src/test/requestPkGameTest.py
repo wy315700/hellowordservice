@@ -22,7 +22,7 @@ class TestSequenceFunctions(unittest.TestCase):
         {\
         "request" : "/helloword/request_pk_game.json",\
         "sessionID"  : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc",\
-        "gameType" : "4" \
+        "gameType" : "1" \
         }\
         '}
         data = urllib.urlencode(values)
