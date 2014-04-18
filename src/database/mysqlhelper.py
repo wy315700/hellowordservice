@@ -502,7 +502,7 @@ class PvpGameInfo():
         gameList = cache.userGameIDs
 
         gameList = eval(gameList)
-
+        
         return gameType,gameList
       except Exception, e:
         return (-1,-1)

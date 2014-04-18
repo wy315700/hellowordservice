@@ -473,7 +473,10 @@ class UploadPKResultHandler(tornado.web.RequestHandler):
                 pvpGameHander = mysqlhelper.PvpGameInfo(user._user)
 
                 userResult = pvpGameHander.varifyUserAns(user._user.userID, ans)
-                self.printSuccess(userResult)
+                if userResult != -1:
+                    self.printSuccess(userResult)
+                else:
+                    self.printError("20501","upload result error")
                 return
             else:
                 raise Exception

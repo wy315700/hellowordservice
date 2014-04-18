@@ -15,7 +15,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         self.url = 'http://127.0.0.1:8000/helloword/request_pk_game.json'
-        self.url2 = 'http://127.0.0.1:8000/helloword/upload_pk_result.json'
+        self.url2 = 'http://halloword.sinaapp.com/helloword/upload_pk_result.json'
 
     # def test_success_request(self):
 
@@ -44,7 +44,7 @@ class TestSequenceFunctions(unittest.TestCase):
         values ={'params' : ' \
         {\
         "request" : "/helloword/upload_pk_result.json",\
-        "sessionID" : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc",\
+        "sessionID" : "bece3614-bf46-4637-a743-b07f6135b150",\
         "gameID"  : "aa",\
         "userAnswer":[\
           {\

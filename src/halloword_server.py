@@ -16,7 +16,7 @@ from uuid import uuid4
 
 from tornado.options import define, options
 define("port", default = 8000, help = "run on the given port",type = int)
-
+options.log_to_stderr = True
 
 from LoginHandler import LoginHandler
 from RegisterHandler import RegisterHandler
