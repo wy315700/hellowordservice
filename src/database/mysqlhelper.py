@@ -12,7 +12,7 @@ import sqlalchemy
 from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy.types import CHAR, Integer, String, VARCHAR, TIMESTAMP
-from sqlalchemy.dialects.mysql import TINYINT
+from sqlalchemy.dialects.mysql import TINYINT,INTEGER
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -46,7 +46,7 @@ global_session = DB_Session()
 class UserModel(BaseModel):
     __tablename__ = 'userinfo'
 
-    userID = Column(Integer, primary_key=True, autoincrement=True)
+    userID = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
     userName = Column(String(32))
     password = Column(String(40))
     salt = Column(String(10))
@@ -59,7 +59,7 @@ class UserSessionModel(BaseModel):
     __tablename__ = 'sessions'
 
     sessionID = Column(CHAR(36), unique=True, primary_key=True)
-    userID = Column(Integer)
+    userID = Column(INTEGER(10,unsigned=True))
     createTime = Column(TIMESTAMP,server_default = sqlalchemy.sql.expression.text('CURRENT_TIMESTAMP()'))
 
 # class BaseExamModel(BaseModel):
@@ -76,7 +76,7 @@ class UserSessionModel(BaseModel):
 
 class Cet4ExamModel(BaseModel):
   __tablename__ = 'exam_cet4'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
   pro_ans_b = Column(VARCHAR(10))
@@ -88,7 +88,7 @@ class Cet4ExamModel(BaseModel):
 
 class Cet6ExamModel(BaseModel):
   __tablename__ = 'exam_cet6'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
   pro_ans_b = Column(VARCHAR(10))
@@ -100,7 +100,7 @@ class Cet6ExamModel(BaseModel):
 
 class GreExamModel(BaseModel):
   __tablename__ = 'exam_gre'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
   pro_ans_b = Column(VARCHAR(10))
@@ -112,7 +112,7 @@ class GreExamModel(BaseModel):
 
 class IeltsExamModel(BaseModel):
   __tablename__ = 'exam_ielts'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
   pro_ans_b = Column(VARCHAR(10))
@@ -124,7 +124,7 @@ class IeltsExamModel(BaseModel):
 
 class ToeflExamModel(BaseModel):
   __tablename__ = 'exam_toefl'
-  pro_id = Column(Integer, primary_key=True, autoincrement=True)
+  pro_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   pro_description = Column(VARCHAR(50))
   pro_ans_a = Column(VARCHAR(10))
   pro_ans_b = Column(VARCHAR(10))
