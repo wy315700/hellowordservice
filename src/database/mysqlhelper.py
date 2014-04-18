@@ -35,7 +35,10 @@ except Exception, e:
   isSae = False
 
 ##sqlalchemy 基本变量
-global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8')
+if isSae:
+  global_engine = create_engine('mysql://%s:%s@%s:%d/%s?charset=utf8' % (sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_HOST,3307,sae.const.MYSQL_DB) , encoding='utf8', pool_recycle=10 )
+else:
+   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8')
 BaseModel = declarative_base()
 DB_Session = sessionmaker(bind=global_engine)
 global_session = DB_Session()
