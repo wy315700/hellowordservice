@@ -39,6 +39,5 @@ class TestSequenceFunctions(unittest.TestCase):
             print e.reason
 
 
-
 if __name__ == '__main__':
     unittest.main()

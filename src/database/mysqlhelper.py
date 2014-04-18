@@ -17,6 +17,7 @@ from sqlalchemy.dialects.mysql import TINYINT,INTEGER
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func, or_, not_
+from sqlalchemy.exc import IntegrityError
 
 
 
@@ -38,7 +39,7 @@ except Exception, e:
 if isSae:
   global_engine = create_engine('mysql://%s:%s@%s:%d/%s?charset=utf8' % (sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_HOST,3307,sae.const.MYSQL_DB) , encoding='utf8', pool_recycle=10 )
 else:
-   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8')
+   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8',echo=True)
 BaseModel = declarative_base()
 DB_Session = sessionmaker(bind=global_engine)
 global_session = DB_Session()
@@ -133,6 +134,14 @@ class ToeflExamModel(BaseModel):
   pro_point = Column(TINYINT(4))
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
+
+class UserPkGameCacheModel(BaseModel):
+  __tablename__ = 'user_pk_game_cache'
+  id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
+  userID = Column(INTEGER(10,unsigned=True), unique=True)
+  userGameType = Column(TINYINT(4))
+  userGameIDs = Column(String(100))
+  createTime = Column(TIMESTAMP,server_default = sqlalchemy.sql.expression.text('CURRENT_TIMESTAMP()'))
 
 class UserInfo():
     def __init__(self):
@@ -402,7 +411,7 @@ class PvpGameInfo():
 
             for row in l:
               results.append(row2dict(row))
-            # self.saveGameListToCache(self.user.userID, gameType, rand_list)
+            self.saveGameListToCache(self._user.userID, gameType, rand_list)
             return results
         except:
             print "Error: unable to fecth data"
@@ -419,18 +428,25 @@ class PvpGameInfo():
       if len(gameList) == 0:
         return -1;
       
-      sql = "INSERT INTO `user_pk_game_cache` (`userID`,`userGameType`,`userGameIDs`) VALUES (%d,'%s','%s')" %(userID,gameType,repr(gameList) )
-
+      # sql = "INSERT INTO `user_pk_game_cache` (`userID`,`userGameType`,`userGameIDs`) VALUES (%d,'%s','%s')" %(userID,gameType,repr(gameList) )
+      gameCache = UserPkGameCacheModel(userID = userID, userGameType = gameType, userGameIDs = repr(gameList))
       try:
         # Execute the SQL command
-        self.cursor.execute(sql)
+        self._session.add(gameCache)
+        self._session.commit()
         # Fetch all the rows in a list of lists.
         return 0
-      except:
-        print "Error: unable to fecth data"
-        logging.warning(traceback.format_exc())
+      except IntegrityError,e:
+        logging.warning("exists")
+        self._session.rollback()
         # Rollback in case there is any error
-        self.db.rollback()
+        self._session.query(UserPkGameCacheModel).filter(UserPkGameCacheModel.userID == userID).delete()
+        self._session.add(gameCache)
+        self._session.commit()
+        return 0
+      except Exception,e:
+        self._session.rollback()
+        # Rollback in case there is any error
         return -1
 
 
