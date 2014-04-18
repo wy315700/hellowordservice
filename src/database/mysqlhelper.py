@@ -18,6 +18,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func, or_, not_
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 
 
@@ -39,7 +40,7 @@ except Exception, e:
 if isSae:
   global_engine = create_engine('mysql://%s:%s@%s:%d/%s?charset=utf8' % (sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_HOST,3307,sae.const.MYSQL_DB) , encoding='utf8', pool_recycle=10 )
 else:
-   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8',echo=True)
+   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8',echo=False)
 BaseModel = declarative_base()
 DB_Session = sessionmaker(bind=global_engine)
 global_session = DB_Session()
@@ -142,6 +143,12 @@ class UserPkGameCacheModel(BaseModel):
   userGameType = Column(TINYINT(4))
   userGameIDs = Column(String(100))
   createTime = Column(TIMESTAMP,server_default = sqlalchemy.sql.expression.text('CURRENT_TIMESTAMP()'))
+
+class UserRankInfoModel(BaseModel):
+  __tablename__ = 'user_rank_info'
+  userID = Column(INTEGER(10,unsigned=True), primary_key=True)
+  userScore = Column(INTEGER(10,unsigned=True))
+  userExp = Column(INTEGER(10,unsigned=True))
 
 class UserInfo():
     def __init__(self):
@@ -349,7 +356,7 @@ class PvpGameInfo():
         self.cursor.execute("set names utf8")
         self._user = user
         self._session = DB_Session()
-
+        self.__row2dict = lambda r: {c.name: getattr(r, c.name) for c in r.__table__.columns}
 
     def __del__(self):
         if self.cursor:
@@ -407,10 +414,10 @@ class PvpGameInfo():
             l = query.all()
             results = []
 
-            row2dict = lambda r: {c.name: getattr(r, c.name) for c in r.__table__.columns}
+            
 
             for row in l:
-              results.append(row2dict(row))
+              results.append(self.__row2dict(row))
             self.saveGameListToCache(self._user.userID, gameType, rand_list)
             return results
         except:
@@ -419,6 +426,88 @@ class PvpGameInfo():
             # Rollback in case there is any error
             self.db.rollback()
             return -1
+    def varifyUserAns(self,userID,userAnsList):
+      gameType , gameList = self.getGameListFromCache(userID)
+
+      if gameList == -1:
+        return -1
+
+      modelList = {
+          "1" : Cet4ExamModel,
+          "3" : Cet6ExamModel,
+          "5" : ToeflExamModel,
+          "7" : IeltsExamModel,
+          "9" : GreExamModel,
+        }
+
+      modelClass = modelList[gameType]
+
+      query = self._session.query(modelClass).filter(modelClass.pro_id.in_(gameList))
+      l = query.all()
+
+      results = []
+      for row in l:
+        results.append(self.__row2dict(row))
+
+      if len(userAnsList) != len(gameList):
+        return -1
+
+      thisScore = 0
+      correctNum = 0
+      incorrectNum = 0
+      ##计算用户对了几个
+      for i in range(len(userAnsList)):
+        if userAnsList[i] == results[i]['pro_ans_a']:
+          correctNum += 1
+          thisScore += results[i]['pro_point']
+        else:
+          incorrectNum += 1
+
+      try:
+        query = self._session.query(UserRankInfoModel).filter(UserRankInfoModel.userID == userID)
+
+        userRankInfoObj = query.one()
+        #如果用户还没做过题，那么创建一个
+      except NoResultFound, e:
+        userRankInfoObj = UserRankInfoModel(userID = userID, userScore = 0, userExp = 0)
+        self._session.add(userRankInfoObj)
+        self._session.flush()
+      except Exception,e:
+        return -1
+      
+      userRankInfoObj.userScore += thisScore
+
+      userRankInfoObj.userExp   += len(gameList)
+
+      userScore = userRankInfoObj.userScore
+      userExp   = userRankInfoObj.userExp
+      self._session.commit()
+
+
+      return {
+        "correct" : correctNum,
+        "incorrect" : incorrectNum,
+        "userExp" : userExp,
+        "userScore" : userScore
+      }
+
+    def getGameListFromCache(self,userID):
+      try:
+        query = self._session.query(UserPkGameCacheModel).filter(UserPkGameCacheModel.userID == userID)
+
+        cache = query.one()
+
+        gameType = str(cache.userGameType)
+
+        gameList = cache.userGameIDs
+
+        gameList = eval(gameList)
+
+        return gameType,gameList
+      except Exception, e:
+        return (-1,-1)
+      
+
 
     def saveGameListToCache(self,userID,gameType,gameList):
       if not userID or not gameList:
@@ -452,11 +541,11 @@ class PvpGameInfo():
 
         
 if __name__ == "__main__":
-  # BaseModel.metadata.create_all(global_engine)
+  BaseModel.metadata.create_all(global_engine)
   # user = UserModel(userName="12a'2",password='111',salt='12')
   # global_session.add(user)
   # user.userName = '11'
   # global_session.commit()
-  sql = "SELECT max(`pro_id`) as max , min(`pro_id`) as min FROM `exam_cet4_en2zh`"
-  print global_session.execute(sql).first()
+  # sql = "SELECT max(`pro_id`) as max , min(`pro_id`) as min FROM `exam_cet4_en2zh`"
+  # print global_session.execute(sql).first()
   pass

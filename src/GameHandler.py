@@ -440,7 +440,7 @@ class UploadPKResultHandler(tornado.web.RequestHandler):
         #"gameID"  : "",
         #"userAnswer":[
         #  {
-        #    "chosen" : "a",
+        #    "ans" : "a",
         #    "time"   : "5",
         #    },
         #  {
@@ -452,15 +452,11 @@ class UploadPKResultHandler(tornado.web.RequestHandler):
         gameID = ''
         userAnswer = []
         try:
-            paramStr = self.get_argument("params");
+            paramStr = self.get_argument("params")
 
-            params = json.loads(paramStr);
+            params = json.loads(paramStr)
             if params['request'] == "/helloword/upload_pk_result.json":
                 sessionID = params['sessionID']
-
-
-                gameType = params['gameType']
-
                 userAnswer = params['userAnswer']
         except Exception, e:
             logging.warning(traceback.format_exc())
@@ -470,11 +466,14 @@ class UploadPKResultHandler(tornado.web.RequestHandler):
         #=======================================
         try:
             user = mysqlhelper.UserInfo()
-
-            result = user.getUserIDBySession(sessionID)
+            result = user.getUserInfoBySessionID(sessionID)
             if result == 0:
                 ## 存储答案
-                self.printSuccess()
+                ans = [x['ans'] for x in userAnswer]
+                pvpGameHander = mysqlhelper.PvpGameInfo(user._user)
+
+                userResult = pvpGameHander.varifyUserAns(user._user.userID, ans)
+                self.printSuccess(userResult)
                 return
             else:
                 raise Exception
@@ -482,16 +481,11 @@ class UploadPKResultHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20101", "login failed")
 
-    def printSuccess(self):
+    def printSuccess(self,userResult):
         response = {
             "request" : "/helloword/upload_pk_result.json",
             "result"  : "success",
-            "details" : {
-                "correct" : "2",
-                "incorrect" : "3",
-                "totalExp" :"20",
-                "userLevel" : "3"
-            } 
+            "details" : userResult
         }
         self.write(json.dumps(response))
     def printError(self,errorCode, error):
