@@ -40,7 +40,7 @@ except Exception, e:
 if isSae:
   global_engine = create_engine('mysql://%s:%s@%s:%d/%s?charset=utf8' % (sae.const.MYSQL_USER,sae.const.MYSQL_PASS,sae.const.MYSQL_HOST,3307,sae.const.MYSQL_DB) , encoding='utf8', pool_recycle=10 )
 else:
-   global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8',echo=False)
+  global_engine = create_engine('mysql://root:asdfghjkl@localhost/helloword?charset=utf8',echo=False)
 BaseModel = declarative_base()
 DB_Session = sessionmaker(bind=global_engine)
 global_session = DB_Session()
@@ -490,6 +490,28 @@ class PvpGameInfo():
         "userExp" : userExp,
         "userScore" : userScore
       }
+
+    def getUserRank(self):
+      try:
+        thisUserRank = self._session.query(UserRankInfoModel).get(self._user.userID)
+
+        if thisUserRank == None:
+          return {
+              "totalScore" : 0,
+              "userRank" : 0
+              }
+        
+        query = self._session.query(UserRankInfoModel).filter(UserRankInfoModel.userScore > thisUserRank.userScore)
+
+        rank = query.count() + 1
+
+        return {
+          "totalScore" : thisUserRank.userScore,
+          "userRank" : rank
+        }
+
+      except Exception, e:
+        raise e
 
     def getGameListFromCache(self,userID):
       try:

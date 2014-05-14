@@ -207,8 +207,6 @@ class RequestRankHandler(tornado.web.RequestHandler):
             params = json.loads(paramStr);
             if params['request'] == "/helloword/request_rank.json":
                 sessionID = params['sessionID']
-
-
         except Exception, e:
             logging.warning(traceback.format_exc())
             self.printError("10001", "params error")
@@ -218,10 +216,14 @@ class RequestRankHandler(tornado.web.RequestHandler):
         try:
             user = mysqlhelper.UserInfo()
 
-            result = user.getUserIDBySession(sessionID)
+            result = user.getUserInfoBySessionID(sessionID)
             if result == 0:
                 ## 获取积分
-                self.printSuccess()
+                pvpGameHander = mysqlhelper.PvpGameInfo(user._user)
+
+                rankInfo = pvpGameHander.getUserRank()
+
+                self.printSuccess(rankInfo)
                 return
             else:
                 raise Exception
@@ -229,14 +231,11 @@ class RequestRankHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20101", "login failed")
 
-    def printSuccess(self):
+    def printSuccess(self, rankInfo):
         response = {
             "request" : "/helloword/request_rank.json",
             "result"  : "success",
-            "details" : {
-                "totalScore" : "22",
-                "userRank" : "23"
-            } 
+            "details" : rankInfo
         }
         self.write(json.dumps(response))
     def printError(self,errorCode, error):
