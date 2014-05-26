@@ -413,9 +413,13 @@ class PvpGameInfo():
 
         max,min = self.getMaxAndMinRowNum(tableName,"pro_id")
 
-        b_list = range(min,max)
+        # b_list = range(min,max)
         
-        rand_list = random.sample(b_list,num)
+        # rand_list = random.sample(b_list,num)
+
+        startProID = random.randrange(min, max, num)
+
+        rand_list = [startProID + i for i in xrange(num) ]
 
         try:
             # Execute the SQL command
