@@ -142,6 +142,7 @@ class UserPkGameAnsModel(BaseModel):
   __tablename__ = 'user_pk_game_ans'
   ans_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
   game_type = Column(TINYINT(4))
+  user_id = Column(INTEGER(10,unsigned=True))
   pro_id = Column(INTEGER(10,unsigned=True))
   user_ans = Column(VARCHAR(20))
 
@@ -566,7 +567,7 @@ class PvpGameInfo():
         return -1;
 
       for i in xrange(len(pro_id_list)):
-        ans = UserPkGameAnsModel(game_type = gameType,pro_id = pro_id_list[i],user_ans = ans_list[i])
+        ans = UserPkGameAnsModel(game_type = gameType, user_id = self._user.userID, pro_id = pro_id_list[i],user_ans = ans_list[i])
         try:
           self._session.add(ans)
         except Exception, e:
