@@ -11,6 +11,7 @@ import MySQLdb
 import sqlalchemy
 from sqlalchemy import Column
 from sqlalchemy import create_engine
+from sqlalchemy import desc
 from sqlalchemy.types import CHAR, Integer, String, VARCHAR, TIMESTAMP
 from sqlalchemy.dialects.mysql import TINYINT,INTEGER
 
@@ -135,6 +136,14 @@ class ToeflExamModel(BaseModel):
   pro_point = Column(TINYINT(4))
   pro_time = Column(TINYINT(4))
   pro_type = Column(TINYINT(4))
+
+
+class UserPkGameAnsModel(BaseModel):
+  __tablename__ = 'user_pk_game_ans'
+  ans_id = Column(INTEGER(10,unsigned=True), primary_key=True, autoincrement=True)
+  game_type = Column(TINYINT(4))
+  pro_id = Column(INTEGER(10,unsigned=True))
+  user_ans = Column(VARCHAR(20))
 
 class UserPkGameCacheModel(BaseModel):
   __tablename__ = 'user_pk_game_cache'
@@ -432,6 +441,9 @@ class PvpGameInfo():
       if gameList == -1:
         return -1
 
+      #把用户做过的答案保存到题库里
+      self.saveAIAns(gameType, gameList, userAnsList)
+
       modelList = {
           "1" : Cet4ExamModel,
           "3" : Cet6ExamModel,
@@ -493,6 +505,7 @@ class PvpGameInfo():
 
     def getUserRank(self):
       try:
+        self._getTopRank()
         thisUserRank = self._session.query(UserRankInfoModel).get(self._user.userID)
 
         if thisUserRank == None:
@@ -513,6 +526,19 @@ class PvpGameInfo():
       except Exception, e:
         raise e
 
+    def _getTopRank(self):
+      try:
+        query = self._session.query(UserRankInfoModel,UserModel).outerjoin(UserModel, UserModel.userID == UserRankInfoModel.userID).order_by(desc(UserRankInfoModel.userScore) ).limit(5)
+
+        topRankList = query.all()
+
+        for x in topRankList:
+          print x[1].userNickname
+
+
+      except Exception, e:
+        raise e
+
     def getGameListFromCache(self,userID):
       try:
         query = self._session.query(UserPkGameCacheModel).filter(UserPkGameCacheModel.userID == userID)
@@ -529,7 +555,26 @@ class PvpGameInfo():
       except Exception, e:
         return (-1,-1)
       
+    def saveAIAns(self,gameType, pro_id_list, ans_list):
+      if not gameType or not pro_id_list or not ans_list:
+        return -1;
 
+      if not isinstance(pro_id_list,list) or not isinstance(ans_list, list):
+        return -1;
+
+      if len(pro_id_list) != len(ans_list):
+        return -1;
+
+      for i in xrange(len(pro_id_list)):
+        ans = UserPkGameAnsModel(game_type = gameType,pro_id = pro_id_list[i],user_ans = ans_list[i])
+        try:
+          self._session.add(ans)
+        except Exception, e:
+          break
+          return -1
+
+      self._session.commit()
+      return 0;
 
     def saveGameListToCache(self,userID,gameType,gameList):
       if not userID or not gameList:
