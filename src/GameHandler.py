@@ -223,7 +223,10 @@ class RequestRankHandler(tornado.web.RequestHandler):
 
                 rankInfo = pvpGameHander.getUserRank()
 
-                self.printSuccess(rankInfo)
+                toprankInfo = pvpGameHander.getTopRank(5)
+
+
+                self.printSuccess(rankInfo,toprankInfo)
                 return
             else:
                 raise Exception
@@ -231,11 +234,14 @@ class RequestRankHandler(tornado.web.RequestHandler):
             logging.warning(traceback.format_exc())
             self.printError("20101", "login failed")
 
-    def printSuccess(self, rankInfo):
+    def printSuccess(self, rankInfo, toprankInfo):
         response = {
             "request" : "/helloword/request_rank.json",
             "result"  : "success",
-            "details" : rankInfo
+            "details" : {
+                "topRank" : toprankInfo,
+                "myRank"  : rankInfo
+            }
         }
         self.write(json.dumps(response))
     def printError(self,errorCode, error):

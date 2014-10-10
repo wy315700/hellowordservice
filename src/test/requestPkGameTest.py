@@ -16,29 +16,29 @@ class TestSequenceFunctions(unittest.TestCase):
     def setUp(self):
         self.url = 'http://127.0.0.1:8000/helloword/request_pk_game.json'
         self.url2 = 'http://127.0.0.1:8000/helloword/upload_pk_result.json'
-        self.url3 = 'http://127.0.0.1:8000/helloword/request_rank.json'
+        self.url3 = 'http://halloword.sinaapp.com/helloword/request_rank.json'
 
-    def test_success_request(self):
+    # def test_success_request(self):
 
-        values ={'params' : ' \
-        {\
-        "request" : "/helloword/request_pk_game.json",\
-        "sessionID"  : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc",\
-        "gameType" : "1" \
-        }\
-        '}
-        data = urllib.urlencode(values)
-        req = urllib2.Request(self.url, data)
-        try:
-            req = urllib2.Request(self.url, data)
-            response = urllib2.urlopen(req)
-            httpcode = response.getcode()
-            self.assertEqual(httpcode,200)
-            print response.read()
-            # self.assertIn('success',response.read())
+    #     values ={'params' : ' \
+    #     {\
+    #     "request" : "/helloword/request_pk_game.json",\
+    #     "sessionID"  : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc",\
+    #     "gameType" : "1" \
+    #     }\
+    #     '}
+    #     data = urllib.urlencode(values)
+    #     req = urllib2.Request(self.url, data)
+    #     try:
+    #         req = urllib2.Request(self.url, data)
+    #         response = urllib2.urlopen(req)
+    #         httpcode = response.getcode()
+    #         self.assertEqual(httpcode,200)
+    #         print response.read()
+    #         # self.assertIn('success',response.read())
 
-        except urllib2.URLError, e:
-            print e.reason
+    #     except urllib2.URLError, e:
+    #         print e.reason
 
     # def test_success_upload(self):
 
@@ -103,26 +103,26 @@ class TestSequenceFunctions(unittest.TestCase):
     #     except urllib2.URLError, e:
     #         print e.reason
 
-    # def test_success_request_rank(self):
+    def test_success_request_rank(self):
 
-    #     values ={'params' : ' \
-    #     {\
-    #     "request" : "/helloword/request_rank.json",\
-    #     "sessionID"  : "a0badbdb-0fa6-4090-bdbc-3765cc6a9afc"\
-    #     }\
-    #     '}
-    #     data = urllib.urlencode(values)
-    #     # req = urllib2.Request(self.url3, data)
-    #     try:
-    #         req = urllib2.Request(self.url3, data)
-    #         response = urllib2.urlopen(req)
-    #         httpcode = response.getcode()
-    #         self.assertEqual(httpcode,200)
-    #         print response.read()
-    #         # self.assertIn('success',response.read())
+        values ={'params' : ' \
+        {\
+        "request" : "/helloword/request_rank.json",\
+        "sessionID"  : "26c218b9-a2e2-48e8-b81c-8f08ec2b5c47"\
+        }\
+        '}
+        data = urllib.urlencode(values)
+        # req = urllib2.Request(self.url3, data)
+        try:
+            req = urllib2.Request(self.url3, data)
+            response = urllib2.urlopen(req)
+            httpcode = response.getcode()
+            self.assertEqual(httpcode,200)
+            print response.read()
+            # self.assertIn('success',response.read())
 
-    #     except urllib2.URLError, e:
-    #         print e.reason
+        except urllib2.URLError, e:
+            print e.reason
 
 
 if __name__ == '__main__':

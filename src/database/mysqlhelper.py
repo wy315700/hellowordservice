@@ -508,9 +508,26 @@ class PvpGameInfo():
         "userScore" : userScore
       }
 
+    def getTopRank(self, num = 5):
+      top_ranks = self._getTopRank(num)
+
+      rankList = []
+      i = 1
+      for rank,user in top_ranks:
+        r = {
+          "userNickname" : user.userNickname,
+          "totalScore"   : rank.userScore,
+          "userRank"     : i
+        }
+        i = i + 1
+        rankList.append(r)
+
+      return rankList
+
+
+
     def getUserRank(self):
       try:
-        self._getTopRank()
         thisUserRank = self._session.query(UserRankInfoModel).get(self._user.userID)
 
         if thisUserRank == None:
@@ -531,15 +548,13 @@ class PvpGameInfo():
       except Exception, e:
         raise e
 
-    def _getTopRank(self):
+    def _getTopRank(self, num = 5):
       try:
-        query = self._session.query(UserRankInfoModel,UserModel).outerjoin(UserModel, UserModel.userID == UserRankInfoModel.userID).order_by(desc(UserRankInfoModel.userScore) ).limit(5)
+        query = self._session.query(UserRankInfoModel,UserModel).outerjoin(UserModel, UserModel.userID == UserRankInfoModel.userID).order_by(desc(UserRankInfoModel.userScore) ).limit(num)
 
         topRankList = query.all()
 
-        for x in topRankList:
-          print x[1].userNickname
-
+        return topRankList
 
       except Exception, e:
         raise e
